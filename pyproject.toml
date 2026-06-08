@@ -6,9 +6,10 @@ build-backend = "setuptools.backends.legacy:build"
 name = "socratot"
 version = "0.1.0"
 description = "Socratic Multimodal RAG Tutor for Occupational Therapy Education"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 readme = "README.md"
 license = { file = "LICENSE" }
+keywords = ["education", "RAG", "LLM", "Socratic", "occupational-therapy"]
 
 [tool.setuptools.packages.find]
 where = ["."]
