@@ -30,12 +30,11 @@ settings = get_settings()
 st.markdown(
     """
 <style>
-/* dark background */
-.stApp { background-color: #0f1117; }
+.stApp { background-color: #ffffff; }
 
 [data-testid="stSidebar"] {
-    background-color: #0f1117;
-    border-right: 1px solid rgba(255,255,255,.08);
+    background-color: #f8fafc;
+    border-right: 1px solid #e2e8f0;
 }
 
 /* hide default streamlit UI chrome */
@@ -108,16 +107,16 @@ def _render_sidebar() -> None:
             """
         <div style="display:flex;align-items:center;gap:11px;
                     padding-bottom:16px;margin-bottom:16px;
-                    border-bottom:1px solid rgba(148,163,184,.14)">
+                    border-bottom:1px solid #e2e8f0">
             <div style="width:38px;height:38px;border-radius:10px;
                         background:linear-gradient(135deg,#6366F1 0%,#22D3EE 130%);
                         display:flex;align-items:center;justify-content:center;
                         color:white;font-weight:800;font-size:18px;flex-shrink:0;
                         box-shadow:0 8px 20px -8px rgba(99,102,241,.8)">S</div>
             <div>
-                <div style="font-weight:700;font-size:15px;color:#E2E8F0;
+                <div style="font-weight:700;font-size:15px;color:#1e293b;
                             letter-spacing:-.01em">socratOT</div>
-                <div style="font-size:11px;color:#94A3B8">OT Anatomy Tutor</div>
+                <div style="font-size:11px;color:#64748b">OT Anatomy Tutor</div>
             </div>
         </div>
         """,
