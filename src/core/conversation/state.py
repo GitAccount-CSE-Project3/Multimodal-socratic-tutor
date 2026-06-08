@@ -54,14 +54,16 @@ class ConversationPhase(str, Enum):
         }[self.value]
 
     def next_phase(self) -> ConversationPhase | None:
-        order = [
-            ConversationPhase.RAPPORT,
-            ConversationPhase.TUTORING,
-            ConversationPhase.ASSESSMENT,
-            ConversationPhase.MASTERY,
-        ]
-        idx = order.index(self)
-        return order[idx + 1] if idx < len(order) - 1 else None
+        idx = _PHASE_ORDER.index(self)
+        return _PHASE_ORDER[idx + 1] if idx < len(_PHASE_ORDER) - 1 else None
+
+
+_PHASE_ORDER: tuple[ConversationPhase, ...] = (
+    ConversationPhase.RAPPORT,
+    ConversationPhase.TUTORING,
+    ConversationPhase.ASSESSMENT,
+    ConversationPhase.MASTERY,
+)
 
 
 class HintLevel(int, Enum):
