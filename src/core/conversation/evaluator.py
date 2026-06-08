@@ -11,6 +11,7 @@ Uses LLM-as-judge approach: structured JSON output from gpt-4o-mini.
 from __future__ import annotations
 
 import asyncio
+import re
 from dataclasses import dataclass
 
 from src.core.conversation.state import ResponseQuality
@@ -190,8 +191,6 @@ Evaluate the student response and return ONLY valid JSON:
 
     def keyword_overlap(self, response: str, reference: str) -> float:
         """Calculate keyword overlap ratio between response and reference."""
-        import re
-
         stopwords = {
             "the",
             "a",
