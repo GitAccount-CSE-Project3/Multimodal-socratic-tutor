@@ -79,8 +79,11 @@ class Settings(BaseSettings):
     openai_llm_model: str = Field(default="gpt-4o-mini")
     openai_vision_model: str = Field(default="gpt-4o")
     openai_embedding_model: str = Field(default="text-embedding-3-small")
+
+    # ── Audio (TTS / STT) ─────────────────────
     openai_tts_model: str = Field(default="gpt-4o-mini-tts")
     openai_stt_model: str = Field(default="gpt-4o-mini-transcribe")
+    # Valid voices: alloy, echo, fable, onyx, nova, shimmer
     tts_voice: str = Field(default="alloy")
 
     # ── Embeddings ────────────────────────────
