@@ -96,6 +96,17 @@ class InvalidPhaseTransitionError(SocratOTError):
     """Raised when trying to transition to an invalid conversation phase."""
 
 
+# ── Audio ─────────────────────────────────────────────────────────────────────
+
+
+class AudioTranscriptionError(SocratOTError):
+    """Raised when Whisper STT transcription fails."""
+
+
+class AudioSynthesisError(SocratOTError):
+    """Raised when OpenAI TTS synthesis fails."""
+
+
 # ── Persistence ───────────────────────────────────────────────────────────────
 
 
