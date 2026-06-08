@@ -1,15 +1,3 @@
-"""
-scripts/setup.py
-
-Cross-platform setup for socratOT.
-Python 3.11 | macOS Apple Silicon | Windows | Linux
-
-Usage:
-    python scripts/setup.py                # full setup
-    python scripts/setup.py --cpu-only     # force CPU torch
-    python scripts/setup.py --skip-whisper # skip whisper install
-    python scripts/setup.py --dry-run      # print steps only
-"""
 
 from __future__ import annotations
 
@@ -77,9 +65,6 @@ def pip(*packages: str, dry_run: bool = False) -> int:
     )
 
 
-# ─────────────────────────────────────────────────────────────
-
-
 def check_python(dry_run: bool = False) -> None:
     section("Python version check")
     v = sys.version_info
@@ -91,8 +76,6 @@ def check_python(dry_run: bool = False) -> None:
 
 def create_env_file(dry_run: bool = False) -> None:
     section(".env setup")
-    # Look for .env.example in ROOT (project root where socratOT/ lives)
-    # and also one level up (workspace root)
     candidates = [
         ROOT / ".env.example",
         ROOT.parent / "socratOT" / ".env.example",
@@ -116,7 +99,6 @@ def create_env_file(dry_run: bool = False) -> None:
 
 
 def _write_default_env(dst: Path) -> None:
-    """Write a minimal .env if no .env.example is found."""
     content = """\
 APP_ENV=development
 APP_DEBUG=true
@@ -217,16 +199,6 @@ def install_torch(cpu_only: bool = False, dry_run: bool = False) -> None:
 
 def install_whisper(dry_run: bool = False) -> None:
     section("Installing openai-whisper (speech-to-text)")
-    # ── ROOT CAUSE ────────────────────────────────────────────────────────
-    # openai-whisper uses a legacy setup.py that calls pkg_resources at
-    # build time. pip creates an ISOLATED build environment (a fresh temp
-    # venv) that does NOT inherit your upgraded setuptools — it installs
-    # the version declared in whisper's build-requires, which can be old
-    # and missing pkg_resources.
-    #
-    # FIX: use --no-build-isolation so pip reuses THIS venv's setuptools
-    #      instead of creating a fresh isolated one.
-    # ─────────────────────────────────────────────────────────────────────
     info("Using --no-build-isolation to inherit upgraded setuptools")
     code = run(
         [
@@ -252,10 +224,8 @@ def install_whisper(dry_run: bool = False) -> None:
 
 def setup_precommit(dry_run: bool = False) -> None:
     section("Setting up pre-commit hooks")
-    # Only works inside a git repo
     git_dir = ROOT / ".git"
     if not git_dir.exists():
-        # Check parent dirs up to 3 levels
         found = any(
             (ROOT.parent / (".git" if i == 0 else "../" * i + ".git")).exists() for i in range(3)
         )
@@ -308,9 +278,6 @@ def verify_install(dry_run: bool = False) -> None:
         warn("Re-run setup or install missing packages manually")
 
 
-# ─────────────────────────────────────────────────────────────
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="socratOT setup")
     parser.add_argument("--cpu-only", action="store_true")
@@ -333,11 +300,6 @@ def main() -> None:
     create_env_file(dr)
     create_dirs(dr)
 
-    # Install order is critical:
-    # 1. Upgrade pip + setuptools FIRST
-    # 2. Install requirements.txt (uses upgraded setuptools)
-    # 3. Install torch (platform wheel, outside requirements.txt)
-    # 4. Install whisper with --no-build-isolation (uses this venv's setuptools)
     upgrade_pip(dr)
     install_requirements(dr)
     install_torch(cpu_only=args.cpu_only, dry_run=dr)

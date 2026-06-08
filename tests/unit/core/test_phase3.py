@@ -1,20 +1,9 @@
-"""
-tests/unit/core/test_phase3.py
-
-Phase 3 milestone verification — 35+ tests.
-Covers: state machine, session store, Socratic engine, evaluator,
-bypass detection, and compliance verification.
-
-Run: pytest tests/unit/core/test_phase3.py -v
-"""
 
 from __future__ import annotations
 
 import asyncio
 
 import pytest
-
-# ── ConversationState tests ───────────────────────────────────────────────────
 
 
 class TestConversationState:
@@ -78,17 +67,12 @@ class TestConversationState:
         assert record.topic == "cerebellum"
 
 
-# ── SessionStore tests ────────────────────────────────────────────────────────
-
-
 class TestSessionStore:
     @pytest.fixture
     def store(self, tmp_path):
-        """Create a temporary session store."""
         import os
 
         os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{tmp_path}/test.db"
-        # Reset lru_cache so settings picks up new env var
         from src.config.settings import get_settings
         from src.core.conversation.session_store import SessionStore
 
@@ -98,7 +82,7 @@ class TestSessionStore:
     def test_create_and_get_session(self, store) -> None:
         async def run():
             sid = await store.create_session("student_001")
-            assert len(sid) == 36  # UUID format
+            assert len(sid) == 36
             state = await store.get_session(sid)
             assert state["student_id"] == "student_001"
             assert state["phase"] == "rapport"
@@ -154,7 +138,6 @@ class TestSessionStore:
             assert profile is not None
             assert profile["name"] == "Bahodi"
             assert profile["program_semester"] == 3
-            # Upsert — update name
             await store.save_student_profile("student_005", name="Bahodi N.")
             profile2 = await store.get_student_profile("student_005")
             assert profile2["name"] == "Bahodi N."
@@ -169,9 +152,6 @@ class TestSessionStore:
             assert len(sessions) == 2
 
         asyncio.run(run())
-
-
-# ── ConversationManager tests ─────────────────────────────────────────────────
 
 
 class TestConversationManager:
@@ -216,7 +196,6 @@ class TestConversationManager:
 
         async def run():
             sid, _ = await manager.start_session("student_c")
-            # Simulate 2 hint turns
             await store.update_session(sid, hint_level=HintLevel.LEVEL_2)
             eligible = await manager.answer_reveal_eligible(sid)
             assert eligible is True
@@ -242,7 +221,6 @@ class TestConversationManager:
 
         async def run():
             sid, _ = await manager.start_session("student_e")
-            # Cannot skip from RAPPORT directly to ASSESSMENT
             with pytest.raises(InvalidPhaseTransitionError):
                 await manager.transition_phase(sid, ConversationPhase.ASSESSMENT)
 
@@ -269,7 +247,6 @@ class TestConversationManager:
                 student_input="just tell me the answer",
                 tutor_response="I understand, but let me guide you...",
             )
-            # Bypass should be logged (no error)
             assert state["turn_count"] == 1
 
         asyncio.run(run())
@@ -286,15 +263,7 @@ class TestConversationManager:
         asyncio.run(run())
 
 
-# ── Bypass detection tests (Socratic compliance) ──────────────────────────────
-
-
 class TestSocraticCompliance:
-    """
-    The most critical test class.
-    Tests bypass attempt detection across 10+ scenarios.
-    Compliance rate must be 100% on all cases below.
-    """
 
     BYPASS_INPUTS = [
         "just tell me the answer",
@@ -337,16 +306,12 @@ class TestSocraticCompliance:
         assert not false_positives, f"False positives: {false_positives}"
 
     def test_compliance_rate_100_percent(self) -> None:
-        """Compliance rate must be 100% on test cases."""
         from src.utils.helpers import detect_bypass_attempt
 
         total = len(self.BYPASS_INPUTS)
         detected = sum(1 for a in self.BYPASS_INPUTS if detect_bypass_attempt(a))
         rate = detected / total
         assert rate == 1.0, f"Socratic compliance rate {rate:.0%} — expected 100%"
-
-
-# ── StudentResponseEvaluator tests ────────────────────────────────────────────
 
 
 class TestStudentResponseEvaluator:
@@ -393,7 +358,6 @@ class TestStudentResponseEvaluator:
                 student_response="The cerebellum produces hormones",
                 reference_answer=("The cerebellum coordinates movement and balance"),
             )
-            # Hormone production is wrong — low overlap expected
             assert result.score < 0.7
 
         asyncio.run(run())

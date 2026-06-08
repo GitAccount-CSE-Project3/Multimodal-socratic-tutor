@@ -1,9 +1,3 @@
-"""
-tests/unit/core/test_phase4.py
-
-Phase 4 milestone verification — 30+ tests.
-Run: pytest tests/unit/core/test_phase4.py -v
-"""
 
 from __future__ import annotations
 
@@ -13,9 +7,6 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
-
-
-# ── VisionAnalyzer tests ──────────────────────────────────────────────────────
 
 
 class TestVisionAnalyzer:
@@ -84,9 +75,6 @@ class TestVisionAnalyzer:
         assert len(result.structures) == 1
 
 
-# ── ImageQuestionGenerator tests ─────────────────────────────────────────────
-
-
 class TestImageQuestionGenerator:
     def test_fallback_questions_returned_for_brain(self) -> None:
         from src.core.multimodal.question_generator import ImageQuestionGenerator
@@ -139,11 +127,7 @@ class TestImageQuestionGenerator:
         assert len(qs) >= 1
 
 
-# ── StudentMemory tests ───────────────────────────────────────────────────────
-
-
 class TestStudentMemory:
-    """Each test creates its own StudentMemory with a unique DB path."""
 
     @pytest.mark.asyncio
     async def test_load_returns_empty_for_new_student(self, tmp_path) -> None:
@@ -225,11 +209,7 @@ class TestStudentMemory:
         assert json.loads(d["weak_topics"]) == ["cn7"]
 
 
-# ── MemoryManager tests ───────────────────────────────────────────────────────
-
-
 class TestMemoryManager:
-    """Each test creates its own manager with a unique DB path."""
 
     @pytest.mark.asyncio
     async def test_new_student_gets_welcome_opener(self, tmp_path) -> None:
@@ -298,9 +278,6 @@ class TestMemoryManager:
         assert ctx.priority_topics[0] == "spinal_cord"
 
 
-# ── ClinicalScenarioGenerator tests ──────────────────────────────────────────
-
-
 class TestClinicalScenarioGenerator:
     def test_fallback_scenario_has_required_fields(self) -> None:
         from src.core.assessment.scenario_generator import ClinicalScenarioGenerator
@@ -327,9 +304,6 @@ class TestClinicalScenarioGenerator:
             reference_answer="The cerebellar cortex and deep nuclei.",
         )
         assert s.topic == "cerebellum"
-
-
-# ── ReasoningEvaluator tests ──────────────────────────────────────────────────
 
 
 class TestReasoningEvaluator:
@@ -399,9 +373,6 @@ class TestReasoningEvaluator:
         assert failing.passed is False
 
 
-# ── TopicMastery schema tests ─────────────────────────────────────────────────
-
-
 class TestTopicMastery:
     def test_update_applies_weighted_average(self) -> None:
         from src.schemas.assessment import TopicMastery
@@ -425,9 +396,6 @@ class TestTopicMastery:
         tm.score = 90.0
         tm._update_level()
         assert tm.mastery_level == MasteryLevel.MASTERY
-
-
-# ── PerformanceSummary tests ──────────────────────────────────────────────────
 
 
 class TestPerformanceSummary:

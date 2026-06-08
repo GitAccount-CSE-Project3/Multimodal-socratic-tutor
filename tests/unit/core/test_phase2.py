@@ -1,11 +1,3 @@
-"""
-tests/unit/core/test_phase2.py
-
-Phase 2 milestone verification tests.
-All tests must pass before moving to Phase 3.
-
-Run: pytest tests/unit/core/test_phase2.py -v
-"""
 
 from __future__ import annotations
 
@@ -15,9 +7,6 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
-
-
-# ── Chunker tests ─────────────────────────────────────────────────────────────
 
 
 class TestChunker:
@@ -83,9 +72,6 @@ class TestChunker:
         assert chunker.chunk_overlap == 32
 
 
-# ── Embedder tests ────────────────────────────────────────────────────────────
-
-
 class TestEmbedder:
     def test_embedder_has_correct_batch_size(self) -> None:
         from src.core.rag.embedder import Embedder
@@ -101,9 +87,6 @@ class TestEmbedder:
         embedder = Embedder()
         result = asyncio.run(embedder.embed_chunks([]))
         assert result == []
-
-
-# ── HallucinationGuard tests ──────────────────────────────────────────────────
 
 
 class TestHallucinationGuard:
@@ -156,9 +139,6 @@ class TestHallucinationGuard:
         assert score > 0.7
 
 
-# ── RAG Schema tests ──────────────────────────────────────────────────────────
-
-
 class TestRAGSchemas:
     def test_document_chunk_creation(self) -> None:
         from src.schemas.rag import DocumentChunk
@@ -203,9 +183,6 @@ class TestRAGSchemas:
         chunk = DocumentChunk(content="test", source="test.txt")
         with pytest.raises((pydantic.ValidationError, ValueError)):
             RetrievedChunk(chunk=chunk, score=1.5)
-
-
-# ── Ground truth dataset tests ────────────────────────────────────────────────
 
 
 class TestGroundTruthDataset:
@@ -265,9 +242,6 @@ class TestGroundTruthDataset:
             entry = json.loads(line)
             assert len(entry["question"]) > 10, f"Question too short: {entry['question']}"
             assert len(entry["reference_answer"]) > 20, f"Answer too short for: {entry['question']}"
-
-
-# ── Ingest corpus sample test ─────────────────────────────────────────────────
 
 
 class TestCorpusIngestion:

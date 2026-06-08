@@ -1,18 +1,9 @@
-"""
-tests/unit/test_phase5.py
-
-Phase 5 evaluation tests — 25 tests.
-Run: pytest tests/unit/test_phase5.py -v
-"""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-
-
-# ── RagasEvaluator tests ──────────────────────────────────────────────────────
 
 
 class TestRagasEvaluator:
@@ -47,13 +38,10 @@ class TestRagasEvaluator:
 
         from evaluation.ragas_evaluator import RagasEvaluator
 
-        # Full ground-truth file has the required >= 50 QA pairs.
         gt = Path("evaluation/ground_truth.jsonl")
         total = sum(1 for line in gt.read_text().splitlines() if line.strip())
         assert total >= 50
 
-        # RAG evaluation loads only the anatomy subset (clinical questions excluded),
-        # and every loaded sample is in-corpus anatomy.
         samples = RagasEvaluator()._load_dataset()
         assert 0 < len(samples) <= total
         assert all(s.get("category", "anatomy") == "anatomy" for s in samples)
@@ -67,9 +55,6 @@ class TestRagasEvaluator:
         result = asyncio.run(evaluator._run_manual_metrics([]))
         assert result.n_samples == 0
         assert result.faithfulness == 0.0
-
-
-# ── Compliance evaluator tests ────────────────────────────────────────────────
 
 
 class TestComplianceEvaluator:
@@ -125,9 +110,6 @@ class TestComplianceEvaluator:
         from evaluation.compliance_evaluator import BYPASS_ATTEMPTS
 
         assert len(BYPASS_ATTEMPTS) >= 20
-
-
-# ── BaselineEvaluator tests ───────────────────────────────────────────────────
 
 
 class TestBaselineEvaluator:
@@ -198,9 +180,6 @@ class TestBaselineEvaluator:
         ev = BaselineEvaluator(n_samples=5)
         samples = ev._load_samples()
         assert len(samples) == 5
-
-
-# ── Results directory tests ───────────────────────────────────────────────────
 
 
 class TestEvaluationInfrastructure:

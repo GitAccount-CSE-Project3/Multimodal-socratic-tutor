@@ -1,16 +1,3 @@
-"""
-scripts/ingest_corpus.py
-
-Complete corpus ingestion pipeline for socratOT.
-Reads PDF directly → chunks → embeds → indexes into ChromaDB.
-
-Usage:
-    python scripts/ingest_corpus.py              # full pipeline (PDF + sample)
-    python scripts/ingest_corpus.py --sample     # built-in sample only (no internet)
-    python scripts/ingest_corpus.py --pdf PATH   # specific PDF file
-    python scripts/ingest_corpus.py --embed-only # re-embed existing chunks
-    python scripts/ingest_corpus.py --reset      # clear store and re-index
-"""
 
 from __future__ import annotations
 
@@ -25,7 +12,6 @@ sys.path.insert(0, str(ROOT))
 
 from src.utils.logger import logger
 
-# ── Built-in sample corpus ────────────────────────────────────────────────────
 
 SAMPLE_TEXTS = {
     "cerebellum": """
@@ -203,8 +189,6 @@ T1+: full UE independence
 """,
 }
 
-
-# ── Image metadata ─────────────────────────────────────────────────────────────
 
 IMAGE_METADATA = [
     {
@@ -523,17 +507,7 @@ IMAGE_METADATA = [
 ]
 
 
-# ── PDF ingestion ──────────────────────────────────────────────────────────────
-
-
 def ingest_pdf_directly(pdf_path: Path) -> list:
-    """
-    Read PDF directly and return DocumentChunk list.
-    No intermediate .txt files — PDF → chunks in one step.
-
-    Splits by page groups of 5 to create meaningful chunks
-    while preserving context across pages.
-    """
     try:
         from pypdf import PdfReader
     except ImportError:
@@ -564,11 +538,9 @@ def ingest_pdf_directly(pdf_path: Path) -> list:
         print(f"  ERROR reading PDF: {e}")
         return []
 
-    # OT-relevant chapter ranges — focus on nervous system and musculoskeletal
-    # OpenStax A&P 2e chapter page ranges (approximate)
 
     all_chunks = []
-    pages_per_group = 8  # Extract 8 pages at a time as one chunk source
+    pages_per_group = 8
 
     print(f"  Extracting text in groups of {pages_per_group} pages...")
     group_num = 0
@@ -588,10 +560,8 @@ def ingest_pdf_directly(pdf_path: Path) -> list:
         if len(group_text) < 100:
             continue
 
-        # Detect which chapter this group belongs to
         topic_tag = _detect_chapter_topic(group_text)
 
-        # Chunk this group
         chunks = chunker.chunk_text(
             text=group_text,
             source=f"openStax/anatomy_physiology_2e.pdf#pages_{start + 1}-{end}",
@@ -611,7 +581,6 @@ def ingest_pdf_directly(pdf_path: Path) -> list:
 
 
 def _detect_chapter_topic(text: str) -> str:
-    """Detect OT-relevant topic from page text."""
     text_lower = text.lower()
     topic_keywords = {
         "cerebellum": ["cerebellum", "cerebellar", "purkinje", "folia", "vermis"],
@@ -657,15 +626,7 @@ def _detect_chapter_topic(text: str) -> str:
     return "anatomy_general"
 
 
-# ── Sample corpus ─────────────────────────────────────────────────────────────
-
-
 def create_sample_corpus(out_dir: Path) -> list[Path]:
-    """
-    Write the built-in sample anatomy texts to .txt files in out_dir.
-    Returns the list of created file paths. Used for tests and offline
-    bootstrapping when the full OpenStax PDF is unavailable.
-    """
     out_dir.mkdir(parents=True, exist_ok=True)
     files: list[Path] = []
     for topic, text in SAMPLE_TEXTS.items():
@@ -677,7 +638,6 @@ def create_sample_corpus(out_dir: Path) -> list[Path]:
 
 
 def create_sample_chunks() -> list:
-    """Create chunks directly from built-in sample text (no files needed)."""
     from src.config.settings import get_settings
     from src.core.rag.chunker import Chunker
 
@@ -701,7 +661,6 @@ def create_sample_chunks() -> list:
 
 
 def create_image_metadata(data_dir: Path) -> Path:
-    """Write image_metadata.json."""
     out_path = data_dir / "image_metadata.json"
     out_path.write_text(
         json.dumps(IMAGE_METADATA, indent=2, ensure_ascii=False),
@@ -711,11 +670,7 @@ def create_image_metadata(data_dir: Path) -> Path:
     return out_path
 
 
-# ── Vector store ──────────────────────────────────────────────────────────────
-
-
 async def index_chunks(chunks: list, reset: bool = False) -> int:
-    """Embed and index chunks. Returns final chunk count."""
     from src.core.rag.vector_store import get_vector_store
 
     if not chunks:
@@ -731,7 +686,6 @@ async def index_chunks(chunks: list, reset: bool = False) -> int:
         except Exception:
             pass
 
-    # Check for existing data
     try:
         existing = await store.count()
         if existing > 0 and not reset:
@@ -748,9 +702,6 @@ async def index_chunks(chunks: list, reset: bool = False) -> int:
     return count
 
 
-# ── Main pipeline ─────────────────────────────────────────────────────────────
-
-
 async def run(
     pdf_path: Path | None = None,
     use_sample: bool = False,
@@ -764,21 +715,17 @@ async def run(
     print("  socratOT — Corpus Ingestion Pipeline")
     print(f"{'=' * 60}\n")
 
-    # ── Image metadata (always update) ────────────────────────────────────
     print("[ 1/3 ] Updating image metadata")
     create_image_metadata(data_dir)
     print(f"  ✓ {len(IMAGE_METADATA)} images documented")
 
-    # ── Build chunks ───────────────────────────────────────────────────────
     chunks = []
 
     if not embed_only:
-        # Try PDF first
         if pdf_path and pdf_path.exists():
             print("\n[ 2/3 ] Reading PDF directly")
             chunks = ingest_pdf_directly(pdf_path)
 
-        # Always add sample chunks on top
         if use_sample or not chunks:
             print("\n[ 2/3 ] Creating sample corpus chunks")
             sample_chunks = create_sample_chunks()
@@ -792,7 +739,6 @@ async def run(
         print(f"\n  Total chunks to index: {len(chunks)}")
 
     else:
-        # embed_only: load from saved JSONL if it exists
         chunks_file = ROOT / "data" / "processed" / "chunks" / "openStax_chunks.jsonl"
         if chunks_file.exists():
             import jsonlines as jl
@@ -806,7 +752,6 @@ async def run(
             print("  No saved chunks found — run without --embed-only first")
             return
 
-    # Save chunks to JSONL for future --embed-only runs
     if not embed_only and chunks:
         chunks_dir = ROOT / "data" / "processed" / "chunks"
         chunks_dir.mkdir(parents=True, exist_ok=True)
@@ -818,12 +763,10 @@ async def run(
                 writer.write(c.model_dump(mode="json"))
         print(f"  ✓ Saved {len(chunks)} chunks to JSONL")
 
-    # ── Embed and index ────────────────────────────────────────────────────
     print("\n[ 3/3 ] Embedding and indexing")
     count = await index_chunks(chunks, reset=reset)
     print(f"  ✓ {count} chunks indexed in ChromaDB")
 
-    # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'=' * 60}")
     print("  Pipeline complete!")
     print(f"  Chunks indexed:  {count}")
@@ -846,7 +789,6 @@ def main() -> None:
     parser.add_argument("--reset", action="store_true", help="Reset vector store before indexing")
     args = parser.parse_args()
 
-    # Auto-detect PDF if not specified
     pdf_path = None
     if args.pdf:
         pdf_path = Path(args.pdf)

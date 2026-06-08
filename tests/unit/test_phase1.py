@@ -1,11 +1,3 @@
-"""
-tests/unit/test_phase1.py
-
-Phase 1 milestone verification tests.
-All tests must pass before moving to Phase 2.
-
-Run:  pytest tests/unit/test_phase1.py -v
-"""
 
 from __future__ import annotations
 
@@ -13,16 +5,11 @@ from pathlib import Path
 
 import pytest
 
-# ── Settings tests ────────────────────────────────────────────────────────────
-
 
 class TestSettings:
     def test_settings_load_with_defaults(self) -> None:
-        """Settings resolves built-in defaults when no .env is loaded."""
         from src.config.settings import Settings
 
-        # _env_file=None ignores any local .env so we test the real defaults
-        # (otherwise a developer's .env override would make this flaky).
         s = Settings(_env_file=None)
         assert s.openai_llm_model == "gpt-4o-mini"
         assert s.chunk_size == 512
@@ -30,7 +17,6 @@ class TestSettings:
         assert s.top_k_retrieval == 5
 
     def test_settings_singleton(self) -> None:
-        """get_settings() returns the same instance each call."""
         from src.config.settings import get_settings
 
         s1 = get_settings()
@@ -38,7 +24,6 @@ class TestSettings:
         assert s1 is s2
 
     def test_settings_computed_properties(self) -> None:
-        """Computed properties resolve correctly."""
         from src.config.settings import AppEnv, Settings
 
         s = Settings(app_env=AppEnv.DEVELOPMENT)
@@ -46,22 +31,17 @@ class TestSettings:
         assert s.is_production is False
 
     def test_chunk_overlap_validation(self) -> None:
-        """Bad config is clamped (not crashed): overlap is forced below chunk_size."""
         from src.config.settings import Settings
 
         s = Settings(chunk_size=512, chunk_overlap=9999)
         assert s.chunk_overlap < s.chunk_size
 
     def test_out_of_range_settings_clamped(self) -> None:
-        """Out-of-range numeric settings clamp into range instead of raising."""
         from src.config.settings import Settings
 
         s = Settings(max_hint_turns=0, top_k_retrieval=999)
-        assert s.max_hint_turns == 1  # clamped up to minimum
-        assert s.top_k_retrieval == 20  # clamped down to maximum
-
-
-# ── Schema tests ──────────────────────────────────────────────────────────────
+        assert s.max_hint_turns == 1
+        assert s.top_k_retrieval == 20
 
 
 class TestConversationSchemas:
@@ -108,7 +88,7 @@ class TestAssessmentSchemas:
         t.update(90.0)
         assert t.attempts == 1
         assert t.score > 0.0
-        assert t.mastery_level == MasteryLevel.NOVICE  # first update from 0
+        assert t.mastery_level == MasteryLevel.NOVICE
 
     def test_reasoning_score_passed(self) -> None:
         from src.schemas.assessment import MasteryLevel, ReasoningScore
@@ -144,9 +124,6 @@ class TestRAGSchemas:
         result = RetrievalResult(query="cerebellum function")
         assert result.has_results is False
         assert result.top_score == 0.0
-
-
-# ── Utility tests ─────────────────────────────────────────────────────────────
 
 
 class TestHelpers:
@@ -213,11 +190,7 @@ class TestHelpers:
         result = format_citations(sources)
         assert "[1]" in result
         assert "[2]" in result
-        # Deduplicated — should only have 2 entries
         assert "[3]" not in result
-
-
-# ── Prompt loader tests ───────────────────────────────────────────────────────
 
 
 class TestPromptLoader:
@@ -252,9 +225,6 @@ class TestPromptLoader:
         keys = list_prompt_keys()
         assert len(keys) > 0
         assert "socratic.rapport_opener" in keys
-
-
-# ── Project structure tests ───────────────────────────────────────────────────
 
 
 class TestProjectStructure:
