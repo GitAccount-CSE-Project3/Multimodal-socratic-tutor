@@ -6,6 +6,17 @@ Teaches OT students Anatomy & Neuroscience through guided questioning —
 never direct answers. GPT-4o vision, ChromaDB RAG, Socratic engine,
 student memory, and clinical assessment.
 
+## Features
+
+- **Socratic questioning engine** — never gives direct answers, always guides via hints
+- **Multimodal input** — GPT-4o vision for anatomical image analysis
+- **RAG pipeline** — ChromaDB-backed retrieval over OpenStax OT corpus
+- **Student memory** — cross-session progress tracked in SQLite
+- **Clinical assessment** — scenario generation and mastery scoring
+- **Voice accessibility** — Whisper STT + OpenAI TTS
+
+---
+
 ## Quick start
 
 ```bash
