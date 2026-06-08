@@ -129,7 +129,7 @@ def render() -> None:
                 st.info(
                     "No mastery data yet. Complete tutoring sessions and "
                     "assessments — scores will appear here.",
-                    icon="📊",
+                    icon=None,
                 )
             else:
                 if len(scores) >= 4:
@@ -147,7 +147,7 @@ def render() -> None:
                 st.success("No weak areas — great work!")
             else:
                 for topic in weak_topics:
-                    st.warning(topic.replace("_", " ").title(), icon="⚠️")
+                    st.warning(topic.replace("_", " ").title())
 
         with st.container(border=True):
             _section_title("Memory summary")
@@ -203,15 +203,15 @@ def render() -> None:
     _section_title("Quick actions")
     ca, cb, cc = st.columns(3)
     with ca:
-        if st.button("💬  Continue tutoring", width="stretch"):
+        if st.button("Continue tutoring", width="stretch"):
             st.session_state.current_page = "chat"
             st.rerun()
     with cb:
-        if st.button("🖼️  Analyse an image", width="stretch"):
+        if st.button("Analyse an image", width="stretch"):
             st.session_state.current_page = "images"
             st.rerun()
     with cc:
-        if st.button("🔄  Reset session", width="stretch"):
+        if st.button("Reset session", width="stretch"):
             for key in [
                 "messages",
                 "phase",

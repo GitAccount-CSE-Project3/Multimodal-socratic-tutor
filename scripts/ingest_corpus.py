@@ -717,7 +717,7 @@ async def run(
 
     print("[ 1/3 ] Updating image metadata")
     create_image_metadata(data_dir)
-    print(f"  ✓ {len(IMAGE_METADATA)} images documented")
+    print(f"  {len(IMAGE_METADATA)} images documented")
 
     chunks = []
 
@@ -730,7 +730,7 @@ async def run(
             print("\n[ 2/3 ] Creating sample corpus chunks")
             sample_chunks = create_sample_chunks()
             chunks.extend(sample_chunks)
-            print(f"  ✓ {len(sample_chunks)} sample chunks added")
+            print(f"  {len(sample_chunks)} sample chunks added")
 
         if not chunks:
             print("  ERROR: No chunks created — check PDF path or use --sample")
@@ -761,11 +761,11 @@ async def run(
         with jl.open(chunks_file, mode="w") as writer:
             for c in chunks:
                 writer.write(c.model_dump(mode="json"))
-        print(f"  ✓ Saved {len(chunks)} chunks to JSONL")
+        print(f"  Saved {len(chunks)} chunks to JSONL")
 
     print("\n[ 3/3 ] Embedding and indexing")
     count = await index_chunks(chunks, reset=reset)
-    print(f"  ✓ {count} chunks indexed in ChromaDB")
+    print(f"  {count} chunks indexed in ChromaDB")
 
     print(f"\n{'=' * 60}")
     print("  Pipeline complete!")

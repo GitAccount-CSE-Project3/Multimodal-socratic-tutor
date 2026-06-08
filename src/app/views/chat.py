@@ -37,9 +37,9 @@ def _phase_topbar() -> None:
     with col3:
         if phase == "tutoring":
             if hint >= max_h:
-                st.caption("✅ Reveal unlocked")
+                st.caption("Reveal unlocked")
             else:
-                st.caption(f"💡 Hint {hint}/{max_h}")
+                st.caption(f"Hint {hint}/{max_h}")
     st.divider()
 
 
@@ -60,25 +60,25 @@ def _render_message(msg: dict, idx: int = 0) -> None:
     is_bypass = msg.get("is_bypass_redirect", False)
     is_reveal = msg.get("is_reveal", False)
 
-    with st.chat_message(role, avatar="🧠" if role == "assistant" else "👤"):
+    with st.chat_message(role):
         st.markdown(content)
 
         if hint_lvl is not None and role == "assistant":
             hint_labels = {0: "Guiding question", 1: "Hint 1", 2: "Hint 2", 3: "Answer revealed"}
             hint_str = hint_labels.get(hint_lvl, f"Hint {hint_lvl}")
             if is_bypass:
-                st.caption("⚠️ Bypass attempt redirected")
+                st.caption("Bypass attempt redirected")
             elif is_reveal:
-                st.caption("✅ Answer revealed")
+                st.caption("Answer revealed")
             else:
-                st.caption(f"💡 {hint_str}")
+                st.caption(hint_str)
 
         if citations and st.session_state.get("show_citations", True):
             st.caption("Sources: " + " · ".join(citations[:3]))
 
         if role == "assistant" and content and st.session_state.get("enable_tts"):
             audio_key = f"tts_audio_{idx}"
-            if st.button("🔊 Read aloud", key=f"tts_btn_{idx}"):
+            if st.button("Read aloud", key=f"tts_btn_{idx}"):
                 from src.core.audio.audio_service import AudioService
 
                 try:
@@ -120,7 +120,7 @@ def _hint_indicator() -> None:
         return
 
     if hint >= max_hints:
-        st.info("✅ Answer reveal unlocked", icon=None)
+        st.info("Answer reveal unlocked", icon=None)
     else:
         remaining = max_hints - hint
         st.caption(f"Hints used: {hint}/{max_hints} — {remaining} remaining")
@@ -307,7 +307,7 @@ def _composer() -> None:
     with st.container(
         key="composer_bar", horizontal=True, vertical_alignment="center", gap="small"
     ):
-        with st.popover("📎" if attached else "➕", width="content"):
+        with st.popover("+" , width="content"):
             uploaded = st.file_uploader(
                 "Attach an anatomy image",
                 type=["png", "jpg", "jpeg", "webp"],
@@ -323,7 +323,7 @@ def _composer() -> None:
                 st.rerun()
 
         audio = None
-        with st.popover("🎙", width="content"):
+        with st.popover("Voice", width="content"):
             if hasattr(st, "audio_input"):
                 st.caption("Record, then it transcribes into the message box.")
                 audio = st.audio_input(
@@ -348,7 +348,7 @@ def _composer() -> None:
                         st.session_state.composer_text = f"{prev} {text}".strip() if prev else text
                         st.rerun()
                     else:
-                        st.toast("No speech detected", icon="🎙")
+                        st.toast("No speech detected")
                 except AudioError as e:
                     st.error(str(e))
 
@@ -361,17 +361,17 @@ def _composer() -> None:
             width="stretch",
         )
 
-        send = st.button("➤", width="content", type="primary", disabled=disabled)
+        send = st.button("Send", width="content", type="primary", disabled=disabled)
 
     if attached:
-        st.caption(f"📎 {getattr(attached, 'name', 'image')} attached — analysed on send")
+        st.caption(f"{getattr(attached, 'name', 'image')} attached — analysed on send")
 
     if send:
         text = st.session_state.get("composer_text", "").strip()
         img = st.session_state.get("uploaded_image")
         if text or img is not None:
             st.session_state.image_question = text
-            display = text if text else "📷 Image uploaded for analysis"
+            display = text if text else "Image uploaded for analysis"
             st.session_state.messages.append({"role": "user", "content": display})
             st.session_state.is_loading = True
             st.session_state._clear_composer = True
@@ -406,7 +406,7 @@ def render() -> None:
         _render_message(msg, idx)
 
     if st.session_state.is_loading:
-        with st.chat_message("assistant", avatar="🧠"):
+        with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 st.empty()
 

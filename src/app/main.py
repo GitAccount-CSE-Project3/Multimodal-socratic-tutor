@@ -11,7 +11,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="socratOT — OT Anatomy Tutor",
-    page_icon="🧠",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="auto",
     menu_items={
@@ -125,15 +125,15 @@ def _render_sidebar() -> None:
 
         st.write("**Navigation**")
         pages = {
-            "chat": ("💬", "Tutor Chat"),
-            "dashboard": ("📊", "Dashboard"),
-            "images": ("🖼️", "Image Analysis"),
-            "settings": ("⚙️", "Settings"),
+            "chat": "Tutor Chat",
+            "dashboard": "Dashboard",
+            "images": "Image Analysis",
+            "settings": "Settings",
         }
-        for key, (icon, label) in pages.items():
+        for key, label in pages.items():
             active = st.session_state.current_page == key
             if st.button(
-                f"{icon}  {label}",
+                label,
                 key=f"nav_{key}",
                 width="stretch",
                 type="primary" if active else "secondary",
@@ -157,7 +157,7 @@ def _render_sidebar() -> None:
         if phase == "tutoring":
             max_hints = settings.max_hint_turns
             if hint_level >= max_hints:
-                st.success("✓ Answer reveal unlocked", icon=None)
+                st.success("Answer reveal unlocked", icon=None)
             else:
                 remaining = max_hints - hint_level
                 st.info(f"Hints used: {hint_level}/{max_hints} · {remaining} remaining", icon=None)
@@ -177,11 +177,11 @@ def _render_sidebar() -> None:
             st.caption(f"**Store** `{settings.vector_store_type.value}`")
             st.caption(f"**Env** `{settings.app_env.value}`")
             if settings.using_openai and not settings.openai_api_key:
-                st.warning("OPENAI_API_KEY not set in .env", icon="⚠️")
+                st.warning("OPENAI_API_KEY not set in .env")
 
         if st.session_state.student_name:
             st.divider()
-            st.caption(f"👤 **{st.session_state.student_name}**  \nSession active")
+            st.caption(f"**{st.session_state.student_name}**  \nSession active")
 
 
 def _route() -> None:

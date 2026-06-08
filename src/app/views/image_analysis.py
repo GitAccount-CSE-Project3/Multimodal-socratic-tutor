@@ -70,7 +70,7 @@ def render() -> None:
                     key="vision_question",
                 )
 
-                if st.button("🔬 Analyse image", width="stretch", type="primary"):
+                if st.button("Analyse image", width="stretch", type="primary"):
                     with st.spinner("GPT-4o analysing structures..."):
                         image_bytes = uploaded.read()
                         media_type = uploaded.type.split("/")[-1]
@@ -125,7 +125,7 @@ def render() -> None:
                         st.write(question_text)
                         st.write("")
 
-                    if st.button("💬 Continue in tutor chat", width="stretch"):
+                    if st.button("Continue in tutor chat", width="stretch"):
                         first_q = getattr(questions[0], "question", "") if questions else ""
                         if first_q:
                             if "messages" not in st.session_state:
@@ -148,7 +148,7 @@ def render() -> None:
                 with st.container(border=True):
                     _section_title("Sources")
                     for c in result["citations"]:
-                        st.caption(f"📄 {c}")
+                        st.caption(c)
 
         elif result and not result.get("ok"):
             st.error(f"Analysis failed: {result.get('error', 'Unknown error')}")
@@ -161,7 +161,7 @@ def render() -> None:
                     "Upload any anatomical diagram and click **Analyse image**. "
                     "GPT-4o vision will identify structures and generate "
                     "3 Socratic questions ordered by difficulty.",
-                    icon="🔬",
+                    icon=None,
                 )
                 st.caption("Supported: brain · upper extremity · hand · spinal cord · nervous system")
 
@@ -186,7 +186,7 @@ def render() -> None:
 
             with st.expander(f"View all {len(available)} images"):
                 for m in available[:200]:
-                    icon = "✅"
+                    icon = ""
                     detail = (
                         m.get("region", "").replace("_", " ").title()
                         or f"page {m.get('page', '?')}"

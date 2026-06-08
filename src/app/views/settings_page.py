@@ -40,7 +40,7 @@ def render() -> None:
 
     with col_left:
         with st.container(border=True):
-            _section_title("👤  Profile")
+            _section_title("Profile")
             name = st.text_input(
                 "Your name",
                 value=st.session_state.get("student_name", ""),
@@ -58,11 +58,11 @@ def render() -> None:
                 if name.strip():
                     slug = re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
                     st.session_state.student_id = f"student_{slug}" or st.session_state.student_id
-                st.toast("Profile saved", icon="✅")
+                st.toast("Profile saved")
 
     with col_right:
         with st.container(border=True):
-            _section_title("🎛  Tutoring preferences")
+            _section_title("Tutoring preferences")
             st.toggle(
                 "Show source citations",
                 value=st.session_state.get("show_citations", True),
@@ -83,12 +83,12 @@ def render() -> None:
 
     with col_left:
         with st.container(border=True):
-            _section_title("♿  Accessibility")
+            _section_title("Accessibility")
             st.toggle(
                 "Read responses aloud (text-to-speech)",
                 value=st.session_state.get("enable_tts", False),
                 key="enable_tts",
-                help="Adds a 🔊 button to tutor messages (OpenAI gpt-4o-mini-tts).",
+                help="Adds a Read aloud button to tutor messages (OpenAI gpt-4o-mini-tts).",
             )
             st.toggle(
                 "Voice answers (speech-to-text)",
@@ -100,11 +100,11 @@ def render() -> None:
             if (st.session_state.get("enable_tts") or st.session_state.get("enable_stt")) and (
                 not settings.openai_api_key
             ):
-                st.warning("Audio features require OPENAI_API_KEY in .env.", icon="⚠️")
+                st.warning("Audio features require OPENAI_API_KEY in .env.")
 
     with col_right:
         with st.container(border=True):
-            _section_title("🗂  Session")
+            _section_title("Session")
             st.caption(
                 f"Phase **{st.session_state.get('phase', 'rapport').title()}** · "
                 f"{st.session_state.get('turn_count', 0)} turns · "
@@ -114,7 +114,7 @@ def render() -> None:
             with cc1:
                 if st.button("Clear chat", width="stretch"):
                     st.session_state.messages = []
-                    st.toast("Chat cleared", icon="🧹")
+                    st.toast("Chat cleared")
                     st.rerun()
             with cc2:
                 if st.button("Reset session", width="stretch"):
@@ -128,14 +128,14 @@ def render() -> None:
                         "mastery_scores",
                     ]:
                         st.session_state.pop(key, None)
-                    st.toast("Session reset", icon="🔄")
+                    st.toast("Session reset")
                     st.rerun()
             st.caption(
                 "Reset session clears the current conversation only — your long-term "
                 "mastery history is kept across sessions (so the tutor can revisit weak "
                 "topics). To erase that too:"
             )
-            if st.button("🗑  Clear learning history", width="stretch"):
+            if st.button("Clear learning history", width="stretch"):
                 import asyncio
 
                 from src.core.memory.student_memory import StudentMemory
@@ -145,7 +145,7 @@ def render() -> None:
                     asyncio.run(StudentMemory().delete(sid))
                     st.session_state.pop("mastery_scores", None)
                     st.session_state.pop("topics_covered", None)
-                    st.toast("Learning history cleared", icon="🗑")
+                    st.toast("Learning history cleared")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Could not clear history: {e}")
@@ -171,4 +171,4 @@ def render() -> None:
                 f"Environment:  {settings.app_env.value}"
             )
         if settings.using_openai and not settings.openai_api_key:
-            st.warning("OPENAI_API_KEY is not set in your .env file.", icon="⚠️")
+            st.warning("OPENAI_API_KEY is not set in your .env file.")

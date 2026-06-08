@@ -19,7 +19,7 @@ BOLD = "\033[1m"
 
 
 def ok(msg: str) -> None:
-    print(f"  {GREEN}✓{RESET}  {msg}")
+    print(f"  {msg}")
 
 
 def warn(msg: str) -> None:
@@ -27,7 +27,7 @@ def warn(msg: str) -> None:
 
 
 def err(msg: str) -> None:
-    print(f"  {RED}✗{RESET}  {msg}")
+    print(f"  {msg}")
 
 
 def info(msg: str) -> None:
