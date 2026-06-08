@@ -42,13 +42,6 @@ GENERIC_SCENARIO = (
 
 
 class ClinicalScenarioGenerator:
-    """
-    Generates OT clinical scenarios using LLM + RAG context.
-
-    Args:
-        llm: Optional LLM (injected)
-        rag_pipeline: Optional RAGPipeline (injected)
-    """
 
     def __init__(
         self,
@@ -77,16 +70,6 @@ class ClinicalScenarioGenerator:
         topic: str,
         difficulty: str = "intermediate",
     ) -> ClinicalScenario:
-        """
-        Generate a clinical OT scenario for a given topic.
-
-        Args:
-            topic:      Anatomy topic (e.g. 'cerebellum', 'spinal_cord')
-            difficulty: beginner | intermediate | advanced
-
-        Returns:
-            ClinicalScenario with scenario_text, question, and reference_answer
-        """
         context = ""
         try:
             rag_result = await self._get_rag().query(

@@ -8,7 +8,6 @@ from src.utils.logger import logger
 
 @dataclass
 class SessionContext:
-    """Memory context loaded at session start."""
 
     record: MemoryRecord
     is_returning: bool
@@ -17,16 +16,6 @@ class SessionContext:
 
 
 class MemoryManager:
-    """
-    Manages student memory across sessions.
-
-    Usage:
-        manager = MemoryManager()
-        ctx = await manager.load_session_context("student_001", "Alice")
-        # use ctx.personalised_opener as first message
-        await manager.update_after_turn("student_001", "cerebellum", 72.0)
-        await manager.save_session_end("student_001", session_turns=15)
-    """
 
     def __init__(self, memory: StudentMemory | None = None) -> None:
         self._memory = memory or StudentMemory()
@@ -36,7 +25,6 @@ class MemoryManager:
         student_id: str,
         student_name: str = "",
     ) -> SessionContext:
-        """Load memory and build personalised session context."""
         record = await self._memory.load(student_id)
         is_returning = record.total_sessions > 0
 
@@ -67,7 +55,6 @@ class MemoryManager:
         name: str,
         is_returning: bool,
     ) -> str:
-        """Build personalised session opener from memory."""
         greeting = f"Welcome back, {name}!" if name else "Welcome back!"
 
         if not is_returning:
@@ -103,7 +90,6 @@ class MemoryManager:
         topic: str,
         score: float,
     ) -> None:
-        """Update mastery score after a scored turn."""
         await self._memory.update_topic_score(student_id, topic, score)
 
     async def save_session_end(
@@ -111,7 +97,6 @@ class MemoryManager:
         student_id: str,
         session_turns: int,
     ) -> None:
-        """Increment session count and total turns at session end."""
         record = await self._memory.load(student_id)
         record.total_sessions += 1
         record.total_turns += session_turns
@@ -123,11 +108,9 @@ class MemoryManager:
         )
 
     async def get_weak_topics(self, student_id: str) -> list[str]:
-        """Return current weak topics for a student."""
         record = await self._memory.load(student_id)
         return record.weak_topics
 
     async def get_mastery_scores(self, student_id: str) -> dict[str, float]:
-        """Return all mastery scores for a student."""
         record = await self._memory.load(student_id)
         return record.mastery_scores

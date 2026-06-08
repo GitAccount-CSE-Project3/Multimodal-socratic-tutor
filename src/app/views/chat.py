@@ -44,7 +44,6 @@ def _phase_topbar() -> None:
 
 
 def _clean_for_speech(text: str) -> str:
-    """Strip the citation block and markdown symbols so TTS reads naturally."""
     import re
 
     speech = re.split(r"\n\s*Sources?:", text)[0]
@@ -99,12 +98,6 @@ def _render_message(msg: dict, idx: int = 0) -> None:
 
 
 def _render_audio_player(data: bytes, autoplay: bool) -> None:
-    """
-    Play TTS audio via a self-contained base64 <audio> element.
-    Avoids Streamlit's media-file server (which can error when audio bytes are
-    re-served from session_state across reruns). Always shows controls so the
-    student can press play if the browser blocks autoplay.
-    """
     import base64
 
     import streamlit.components.v1 as components
@@ -134,7 +127,6 @@ def _hint_indicator() -> None:
 
 
 def _is_substantive(text: str, engine: object) -> bool:
-    """True if the message already names a topic or asks something teachable."""
     t = text.lower().strip()
     if engine.detect_topic(text):
         return True
@@ -160,10 +152,6 @@ def _is_substantive(text: str, engine: object) -> bool:
 
 
 async def _get_tutor_response(user_input: str, uploaded_image: UploadedFile | None) -> dict:
-    """
-    Call the Socratic engine and return response dict.
-    Runs async in event loop.
-    """
     try:
         from src.core.conversation.socratic_engine import SocraticEngine
         from src.core.conversation.state import ConversationPhase
@@ -300,7 +288,6 @@ WELCOME = (
 
 
 def _send(text: str) -> None:
-    """Append a user message and trigger the tutor response on the next rerun."""
     st.session_state.messages.append({"role": "user", "content": text})
     st.session_state.is_loading = True
     st.rerun()

@@ -8,7 +8,6 @@ from src.schemas.base import BaseSchema, IdentifiedSchema
 
 
 class DocumentChunk(IdentifiedSchema):
-    """A single text chunk from the corpus after splitting."""
 
     content: str = Field(min_length=1)
     source: str
@@ -20,14 +19,12 @@ class DocumentChunk(IdentifiedSchema):
 
 
 class RetrievedChunk(BaseSchema):
-    """A chunk returned by the retriever with relevance score."""
 
     chunk: DocumentChunk
     score: float = Field(ge=0.0, le=1.0)
 
 
 class RetrievalResult(BaseSchema):
-    """Full result from a single RAG retrieval call."""
 
     query: str
     chunks: list[RetrievedChunk] = Field(default_factory=list)
@@ -46,7 +43,6 @@ class RetrievalResult(BaseSchema):
 
 
 class ImageMetadata(BaseSchema):
-    """Metadata for an anatomical diagram image."""
 
     filename: str
     source: str

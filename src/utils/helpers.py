@@ -20,28 +20,18 @@ from typing import Any
 
 
 def truncate_text(text: str, max_chars: int = 500, suffix: str = "...") -> str:
-    """Truncate text to max_chars, appending suffix if truncated."""
     if len(text) <= max_chars:
         return text
     return text[: max_chars - len(suffix)] + suffix
 
 
 def clean_text(text: str) -> str:
-    """
-    Normalise whitespace and remove non-printable characters.
-    Used during corpus ingestion.
-    """
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]", "", text)
     return text.strip()
 
 
 def safe_parse_json(text: str) -> dict[str, Any] | None:
-    """
-    Safely parse JSON from LLM output.
-    Handles common LLM quirks: markdown fences, trailing commas.
-    Returns None if parsing fails.
-    """
     text = re.sub(r"```(?:json)?\s*", "", text)
     text = re.sub(r"```\s*$", "", text)
     text = text.strip()
@@ -55,24 +45,20 @@ def safe_parse_json(text: str) -> dict[str, Any] | None:
 
 
 def hash_string(text: str) -> str:
-    """Return SHA-256 hex digest of a string. Used for chunk IDs."""
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def chunk_list(items: list[Any], size: int) -> list[list[Any]]:
-    """Split a list into chunks of given size."""
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
 def ensure_dir(path: str | Path) -> Path:
-    """Create directory (and parents) if it doesn't exist. Return Path."""
     p = Path(path)
     p.mkdir(parents=True, exist_ok=True)
     return p
 
 
 def format_citations(sources: list[str]) -> str:
-    """Format a list of source strings into a readable citation block."""
     if not sources:
         return ""
     unique = list(dict.fromkeys(sources))
@@ -80,11 +66,6 @@ def format_citations(sources: list[str]) -> str:
 
 
 def detect_bypass_attempt(user_input: str) -> bool:
-    """
-    Detect if a student is trying to bypass Socratic hints.
-    Covers: direct demands, instruction injection, role override,
-    authority commands, and Socratic rejection.
-    """
     bypass_patterns = [
         r"\bjust tell me\b",
         r"\bgive me the answer\b",
@@ -116,5 +97,4 @@ def detect_bypass_attempt(user_input: str) -> bool:
 
 
 def sanitize_student_id(raw_id: str) -> str:
-    """Remove unsafe characters from a student ID string."""
     return re.sub(r"[^a-zA-Z0-9_\-]", "", raw_id)[:64]

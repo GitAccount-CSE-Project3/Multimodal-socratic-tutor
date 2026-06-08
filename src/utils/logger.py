@@ -9,7 +9,6 @@ from src.config.settings import get_settings
 
 
 def _setup_logger() -> None:
-    """Configure loguru with file + stderr handlers."""
     settings = get_settings()
 
     _logger.remove()

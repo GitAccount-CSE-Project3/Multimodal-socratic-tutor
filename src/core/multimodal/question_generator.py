@@ -10,7 +10,6 @@ from src.utils.logger import logger
 
 @dataclass
 class ImageQuestion:
-    """One Socratic question generated from an anatomy image."""
 
     question: str
     structure: str
@@ -19,12 +18,6 @@ class ImageQuestion:
 
 
 class ImageQuestionGenerator:
-    """
-    Generates Socratic questions from VisionResult structures.
-
-    Args:
-        llm: Optional LLM instance (injected for testing)
-    """
 
     def __init__(self, llm: object | None = None) -> None:
         self._llm = llm
@@ -41,16 +34,6 @@ class ImageQuestionGenerator:
         vision_result: VisionResult,
         n_questions: int = 3,
     ) -> list[ImageQuestion]:
-        """
-        Generate n Socratic questions from identified structures.
-
-        Args:
-            vision_result: Output from VisionAnalyzer
-            n_questions:   How many questions to generate (default 3)
-
-        Returns:
-            List of ImageQuestion objects, ordered easy → hard
-        """
         if not vision_result.structures:
             return self._fallback_questions(vision_result.region)
 
@@ -113,7 +96,6 @@ Respond ONLY with valid JSON array:
         return self._fallback_questions(vision_result.region)
 
     def _fallback_questions(self, region: str) -> list[ImageQuestion]:
-        """Return generic Socratic questions when LLM fails."""
         fallbacks = {
             "brain": [
                 ImageQuestion(

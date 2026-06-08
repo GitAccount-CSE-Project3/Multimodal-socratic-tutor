@@ -18,7 +18,6 @@ from src.schemas.base import BaseSchema, IdentifiedSchema
 
 
 class ConversationPhase(str, Enum):
-    """The 4 phases of a tutoring session."""
 
     RAPPORT = "rapport"
     TUTORING = "tutoring"
@@ -40,7 +39,6 @@ class ResponseQuality(str, Enum):
 
 
 class Message(BaseSchema):
-    """Single message in a conversation."""
 
     role: MessageRole
     content: str = Field(min_length=1)
@@ -52,7 +50,6 @@ class Message(BaseSchema):
 
 
 class ConversationHistory(BaseSchema):
-    """Full message history for a session."""
 
     messages: list[Message] = Field(default_factory=list)
 
@@ -72,7 +69,6 @@ class ConversationHistory(BaseSchema):
 
 
 class StudentProfile(BaseSchema):
-    """Lightweight student identity captured in rapport phase."""
 
     student_id: str = Field(min_length=1)
     name: str | None = None
@@ -81,10 +77,6 @@ class StudentProfile(BaseSchema):
 
 
 class SessionState(IdentifiedSchema):
-    """
-    Complete state of one tutoring session.
-    Persisted to SQLite via SessionStore.
-    """
 
     student_id: str
     phase: ConversationPhase = ConversationPhase.RAPPORT
@@ -96,7 +88,6 @@ class SessionState(IdentifiedSchema):
 
     @property
     def answer_reveal_eligible(self) -> bool:
-        """True when the student has received enough hints."""
         from src.config.settings import get_settings
 
         settings = get_settings()

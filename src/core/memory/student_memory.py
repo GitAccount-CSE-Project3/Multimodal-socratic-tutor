@@ -9,7 +9,6 @@ from src.utils.logger import logger
 
 @dataclass
 class MemoryRecord:
-    """In-memory representation of one student's memory."""
 
     student_id: str
     weak_topics: list[str] = field(default_factory=list)
@@ -47,15 +46,6 @@ class MemoryRecord:
 
 
 class StudentMemory:
-    """
-    Async SQLite-backed student memory store.
-
-    Usage:
-        memory = StudentMemory()
-        record = await memory.load("student_001")
-        record.weak_topics.append("cranial_nerves")
-        await memory.save(record)
-    """
 
     def __init__(self) -> None:
         from src.config.settings import get_settings
@@ -67,7 +57,6 @@ class StudentMemory:
         self._initialised = False
 
     def _conn(self) -> object:
-        """Return aiosqlite connection context manager — fresh each call."""
         import aiosqlite
 
         return aiosqlite.connect(self._db_url)
@@ -92,7 +81,6 @@ class StudentMemory:
         self._initialised = True
 
     async def load(self, student_id: str) -> MemoryRecord:
-        """Load memory for a student. Returns empty record if not found."""
         await self.init()
         async with self._conn() as conn:
             conn.row_factory = lambda c, r: dict(zip([col[0] for col in c.description], r))
@@ -106,7 +94,6 @@ class StudentMemory:
         return MemoryRecord(student_id=student_id)
 
     async def save(self, record: MemoryRecord) -> None:
-        """Upsert memory record."""
         await self.init()
         record.last_seen = datetime.now(tz=timezone.utc).isoformat()
         d = record.to_dict()
@@ -146,7 +133,6 @@ class StudentMemory:
         topic: str,
         score: float,
     ) -> MemoryRecord:
-        """Update mastery score for one topic and refresh weak/strong lists."""
         record = await self.load(student_id)
         record.mastery_scores[topic] = round(score, 1)
 
@@ -157,7 +143,6 @@ class StudentMemory:
         return record
 
     async def delete(self, student_id: str) -> None:
-        """Erase all long-term memory for a student (clear learning history)."""
         await self.init()
         async with self._conn() as conn:
             await conn.execute(

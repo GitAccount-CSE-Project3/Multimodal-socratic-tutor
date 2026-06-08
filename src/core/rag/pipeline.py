@@ -12,7 +12,6 @@ from src.utils.logger import logger
 
 @dataclass
 class RAGResponse:
-    """Complete response from the RAG pipeline."""
 
     query: str
     answer: str
@@ -23,7 +22,6 @@ class RAGResponse:
 
     @property
     def formatted_answer(self) -> str:
-        """Answer with citations appended."""
         if not self.citations:
             return self.answer
         cite_str = "\n".join(f"[{i + 1}] {c}" for i, c in enumerate(self.citations))
@@ -31,15 +29,6 @@ class RAGResponse:
 
 
 class RAGPipeline:
-    """
-    Orchestrates the full RAG pipeline.
-
-    Args:
-        retriever:    Retriever instance (injected)
-        llm:          LangChain LLM instance (injected)
-        guard:        HallucinationGuard instance (injected)
-        system_prompt: Optional system prompt override
-    """
 
     DEFAULT_SYSTEM_PROMPT = """You are a knowledgeable anatomy and neuroscience tutor
 for Occupational Therapy students. Answer questions accurately and concisely
@@ -61,7 +50,6 @@ say so clearly. Do not introduce facts not present in the context."""
         self._guard = guard
 
     def _get_llm(self) -> object:
-        """Lazily load LLM instance."""
         if self._llm_instance is None:
             try:
                 self._llm_instance = get_llm()
@@ -73,7 +61,6 @@ say so clearly. Do not introduce facts not present in the context."""
         return self._llm_instance
 
     def _get_guard(self) -> HallucinationGuard:
-        """Lazily load HallucinationGuard."""
         if self._guard is None:
             try:
                 llm = self._get_llm()
@@ -86,7 +73,6 @@ say so clearly. Do not introduce facts not present in the context."""
         return self._guard
 
     def _build_prompt(self, query: str, context: str) -> str:
-        """Build the full prompt for the LLM."""
         return f"""{self._system_prompt}
 
 --- Retrieved Context ---
@@ -98,19 +84,6 @@ Question: {query}
 Answer:"""
 
     async def query(self, user_query: str) -> RAGResponse:
-        """
-        Run the full RAG pipeline for a user query.
-
-        Args:
-            user_query: The student's question
-
-        Returns:
-            RAGResponse with grounded answer and citations
-
-        Raises:
-            RetrievalError: If vector store retrieval fails
-            LLMUnavailableError: If LLM is not reachable
-        """
         logger.info("RAG pipeline query: {q!r}", q=user_query[:80])
 
         retrieval = await self._retriever.retrieve(user_query)

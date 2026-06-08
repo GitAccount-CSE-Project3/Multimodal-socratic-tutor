@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseSchema(BaseModel):
-    """Base for all schemas — immutable, validated on assignment."""
 
     model_config = ConfigDict(
         frozen=False,
@@ -20,13 +19,11 @@ class BaseSchema(BaseModel):
 
 
 class TimestampedSchema(BaseSchema):
-    """Base schema with auto-managed timestamps."""
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
 
 
 class IdentifiedSchema(TimestampedSchema):
-    """Base schema with UUID primary key and timestamps."""
 
     id: UUID = Field(default_factory=uuid4)

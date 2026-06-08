@@ -11,21 +11,6 @@ from src.utils.logger import logger
 
 
 class SessionStore:
-    """
-    Async SQLite-backed store for conversation sessions.
-
-    Schema (sessions table):
-        session_id   TEXT PRIMARY KEY
-        student_id   TEXT NOT NULL
-        phase        TEXT NOT NULL
-        turn_count   INTEGER DEFAULT 0
-        hint_level   INTEGER DEFAULT 0
-        current_topic TEXT
-        history_json TEXT          -- JSON array of turn records
-        created_at   TEXT
-        updated_at   TEXT
-        is_active    INTEGER DEFAULT 1
-    """
 
     def __init__(self) -> None:
         settings = get_settings()
@@ -35,14 +20,6 @@ class SessionStore:
         self._initialised = False
 
     async def _get_conn(self) -> object:
-        """
-        Return an *unopened* aiosqlite connection.
-
-        Note: do NOT await ``aiosqlite.connect`` here. Callers use it as
-        ``async with await self._get_conn() as conn``; the ``async with``
-        opens the connection. Awaiting here too would start the underlying
-        thread twice ("threads can only be started once").
-        """
         try:
             import aiosqlite
 
@@ -51,7 +28,6 @@ class SessionStore:
             raise DatabaseError("aiosqlite not installed", detail=str(e)) from e
 
     async def init(self) -> None:
-        """Create tables if they don't exist. Call once at startup."""
         if self._initialised:
             return
         async with await self._get_conn() as conn:
@@ -84,7 +60,6 @@ class SessionStore:
         logger.info("SessionStore initialised at {db}", db=self._db_url)
 
     async def create_session(self, student_id: str) -> str:
-        """Create a new session and return session_id."""
         await self.init()
         session_id = str(uuid4())
         now = datetime.now(tz=timezone.utc).isoformat()
@@ -105,7 +80,6 @@ class SessionStore:
         return session_id
 
     async def get_session(self, session_id: str) -> dict:
-        """Retrieve session data by ID."""
         await self.init()
         async with await self._get_conn() as conn:
             conn.row_factory = lambda c, r: dict(zip([col[0] for col in c.description], r))
@@ -132,7 +106,6 @@ class SessionStore:
         history: list | None = None,
         is_active: bool | None = None,
     ) -> None:
-        """Partial update — only provided fields are changed."""
         await self.init()
         updates: list[tuple] = []
         values: list = []
@@ -175,7 +148,6 @@ class SessionStore:
         semester: int | None = None,
         weak_topics: list[str] | None = None,
     ) -> None:
-        """Upsert student profile."""
         await self.init()
         now = datetime.now(tz=timezone.utc).isoformat()
         async with await self._get_conn() as conn:
@@ -200,7 +172,6 @@ class SessionStore:
             await conn.commit()
 
     async def get_student_profile(self, student_id: str) -> dict | None:
-        """Get student profile or None if not found."""
         await self.init()
         async with await self._get_conn() as conn:
             conn.row_factory = lambda c, r: dict(zip([col[0] for col in c.description], r))
@@ -214,7 +185,6 @@ class SessionStore:
         return row
 
     async def list_student_sessions(self, student_id: str) -> list[dict]:
-        """Return all sessions for a student, newest first."""
         await self.init()
         async with await self._get_conn() as conn:
             conn.row_factory = lambda c, r: dict(zip([col[0] for col in c.description], r))

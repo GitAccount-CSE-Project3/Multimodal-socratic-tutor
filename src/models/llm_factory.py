@@ -15,10 +15,6 @@ _DEFAULT_TEMPERATURE: float = 0.7
 
 
 class LLMFactory:
-    """
-    Factory for OpenAI LLM instances.
-    Use get_llm() and get_vision_llm() — never instantiate directly.
-    """
 
 
     @staticmethod
@@ -47,14 +43,12 @@ class LLMFactory:
 
     @classmethod
     def get_llm(cls, **kwargs: Any) -> BaseLLM:
-        """Return the primary text LLM (OpenAI)."""
         settings = get_settings()
         logger.info("LLM: OpenAI {m}", m=settings.openai_llm_model)
         return cls._build_openai(settings.openai_llm_model, **kwargs)
 
     @classmethod
     def get_vision_llm(cls, **kwargs: Any) -> BaseLLM:
-        """Return the vision-capable LLM (OpenAI GPT-4o)."""
         settings = get_settings()
         logger.info("Vision LLM: OpenAI {m}", m=settings.openai_vision_model)
         return cls._build_openai(settings.openai_vision_model, **kwargs)
@@ -62,11 +56,9 @@ class LLMFactory:
 
 @lru_cache(maxsize=1)
 def get_llm() -> BaseLLM:
-    """Cached primary LLM singleton."""
     return LLMFactory.get_llm()
 
 
 @lru_cache(maxsize=1)
 def get_vision_llm() -> BaseLLM:
-    """Cached vision LLM singleton."""
     return LLMFactory.get_vision_llm()

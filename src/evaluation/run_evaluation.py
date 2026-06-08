@@ -12,7 +12,6 @@ sys.path.insert(0, str(ROOT))
 
 
 async def run_all(quick: bool = False) -> dict:
-    """Run all evaluations and return combined results."""
     n_samples = 5 if quick else 20
     results = {}
 
@@ -72,7 +71,6 @@ async def run_all(quick: bool = False) -> dict:
 
 
 def _write_report(results: dict) -> None:
-    """Write docs/phase5_results.md from evaluation results."""
     comp = results.get("compliance", {})
     ragas = results.get("ragas", {})
     bases = results.get("baselines", [])

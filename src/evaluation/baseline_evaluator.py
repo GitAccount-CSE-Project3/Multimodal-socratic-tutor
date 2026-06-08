@@ -15,7 +15,6 @@ from src.utils.logger import logger
 
 @dataclass
 class BaselineResult:
-    """Comparison results for one system."""
 
     system_name: str
     rouge_l: float = 0.0
@@ -34,14 +33,6 @@ class BaselineResult:
 
 
 class BaselineEvaluator:
-    """
-    Runs benchmark comparison across three systems.
-
-    Systems compared:
-      1. socratOT   — full RAG + Socratic logic
-      2. no_rag     — LLM only, no retrieval
-      3. no_socratic — RAG only, no hint masking
-    """
 
     def __init__(self, n_samples: int = 10) -> None:
         self._n_samples = n_samples
@@ -66,7 +57,6 @@ class BaselineEvaluator:
         return len(p & r) / max(len(r), 1)
 
     def _rouge_l(self, pred: str, ref: str) -> float:
-        """Simple ROUGE-L using LCS length."""
 
         def lcs(a: list, b: list) -> int:
             m, n = len(a), len(b)
@@ -91,7 +81,6 @@ class BaselineEvaluator:
         return 2 * precision * recall / (precision + recall)
 
     def _bert_score_approx(self, pred: str, ref: str) -> float:
-        """Approximation using token overlap (actual BERTScore needs GPU)."""
         pred_tokens = set(pred.lower().split())
         ref_tokens = set(ref.lower().split())
         if not pred_tokens or not ref_tokens:
@@ -103,7 +92,6 @@ class BaselineEvaluator:
         return 2 * precision * recall / (precision + recall)
 
     async def _get_socratot_answer(self, question: str) -> str:
-        """Get answer from full socratOT system."""
         try:
             from src.core.rag.pipeline import RAGPipeline
 
@@ -115,7 +103,6 @@ class BaselineEvaluator:
             return ""
 
     async def _get_no_rag_answer(self, question: str) -> str:
-        """Get answer from LLM with no retrieval context."""
         try:
             from src.models.llm_factory import get_llm
 
@@ -129,7 +116,6 @@ class BaselineEvaluator:
             return ""
 
     async def _get_no_socratic_answer(self, question: str) -> str:
-        """Get RAG answer with no Socratic masking (direct answer)."""
         try:
             from src.core.rag.pipeline import RAGPipeline
 
@@ -145,7 +131,6 @@ class BaselineEvaluator:
             return ""
 
     async def run(self) -> list[BaselineResult]:
-        """Run all three systems and return comparison results."""
         samples = self._load_samples()
         print(f"  Running benchmark on {len(samples)} samples...")
 

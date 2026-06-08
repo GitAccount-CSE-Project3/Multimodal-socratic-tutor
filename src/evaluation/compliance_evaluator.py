@@ -50,7 +50,6 @@ LEGITIMATE_INPUTS = [
 
 @dataclass
 class ComplianceResult:
-    """Results from compliance evaluation."""
 
     bypass_detected: int = 0
     bypass_total: int = 0
@@ -69,7 +68,6 @@ class ComplianceResult:
 
     @property
     def socratic_compliance_rate(self) -> float:
-        """Combined: high detection + low false positives."""
         return self.bypass_detection_rate * (1 - self.false_positive_rate)
 
     def to_dict(self) -> dict:
@@ -87,7 +85,6 @@ class ComplianceResult:
 
 
 class SocraticComplianceEvaluator:
-    """Evaluates Socratic compliance using detect_bypass_attempt."""
 
     def run(self) -> ComplianceResult:
         from src.utils.helpers import detect_bypass_attempt

@@ -7,11 +7,10 @@ from src.utils.logger import logger
 
 
 class AudioError(Exception):
-    """Raised when TTS/STT fails (missing key, API error, etc.)."""
+    pass
 
 
 class AudioService:
-    """Thin wrapper over OpenAI audio endpoints."""
 
     def __init__(self) -> None:
         self._settings = get_settings()
@@ -27,7 +26,6 @@ class AudioService:
         return self._client
 
     def synthesize(self, text: str, voice: str | None = None) -> bytes:
-        """Text → spoken MP3 bytes. Raises AudioError on failure."""
         if not text or not text.strip():
             raise AudioError("Nothing to read aloud.")
         try:
@@ -52,7 +50,6 @@ class AudioService:
             raise AudioError(f"Text-to-speech failed: {e}") from e
 
     def transcribe(self, audio_bytes: bytes, filename: str = "audio.wav") -> str:
-        """Audio bytes → transcribed text. Raises AudioError on failure."""
         if not audio_bytes:
             raise AudioError("No audio to transcribe.")
         try:

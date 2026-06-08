@@ -24,7 +24,7 @@ __all__ = [
 
 
 class SocratOTError(Exception):
-    """Base exception for all socratOT errors."""
+    pass
 
     def __init__(self, message: str, detail: str = "") -> None:
         super().__init__(message)
@@ -38,72 +38,72 @@ class SocratOTError(Exception):
 
 
 class LLMUnavailableError(SocratOTError):
-    """Raised when the OpenAI API is unreachable or the key is missing."""
+    pass
 
 
 class LLMTimeoutError(SocratOTError):
-    """Raised when an LLM call exceeds the configured timeout."""
+    pass
 
 
 class LLMResponseParseError(SocratOTError):
-    """Raised when LLM returns malformed JSON or unexpected format."""
+    pass
 
 
 class ModelNotFoundError(SocratOTError):
-    """Raised when a requested model is not available from the provider."""
+    pass
 
 
 class VectorStoreError(SocratOTError):
-    """Raised when ChromaDB or FAISS operations fail."""
+    pass
 
 
 class EmbeddingError(SocratOTError):
-    """Raised when embedding model fails to encode text."""
+    pass
 
 
 class CorpusEmptyError(SocratOTError):
-    """Raised when the vector store has no documents indexed."""
+    pass
 
 
 class RetrievalError(SocratOTError):
-    """Raised when semantic retrieval fails."""
+    pass
 
 
 class ImageProcessingError(SocratOTError):
-    """Raised when image upload or pre-processing fails."""
+    pass
 
 
 class ImageAnalysisError(SocratOTError):
-    """Raised when the vision model fails to analyse an image."""
+    pass
 
 
 class UnsupportedImageFormatError(SocratOTError):
-    """Raised when uploaded file is not a supported image format."""
+    pass
 
 
 class SessionNotFoundError(SocratOTError):
-    """Raised when a session_id does not exist in the database."""
+    pass
 
 
 class SessionExpiredError(SocratOTError):
-    """Raised when a session has passed its expiry window."""
+    pass
 
 
 class InvalidPhaseTransitionError(SocratOTError):
-    """Raised when trying to transition to an invalid conversation phase."""
+    pass
 
 
 class AudioTranscriptionError(SocratOTError):
-    """Raised when Whisper STT transcription fails."""
+    pass
 
 
 class AudioSynthesisError(SocratOTError):
-    """Raised when OpenAI TTS synthesis fails."""
+    pass
 
 
 class DatabaseError(SocratOTError):
-    """Raised when a SQLite operation fails."""
+    pass
 
 
 class ConfigurationError(SocratOTError):
-    """Raised when required config is missing or invalid."""
+    pass

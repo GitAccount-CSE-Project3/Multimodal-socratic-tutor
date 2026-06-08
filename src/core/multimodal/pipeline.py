@@ -12,7 +12,6 @@ from src.utils.logger import logger
 
 @dataclass
 class MultimodalResponse:
-    """Complete response from the multimodal pipeline."""
 
     vision_result: VisionResult
     questions: list[ImageQuestion]
@@ -22,14 +21,6 @@ class MultimodalResponse:
 
 
 class MultimodalPipeline:
-    """
-    Orchestrates image analysis → question generation → RAG grounding.
-
-    Args:
-        vision_analyzer:    VisionAnalyzer instance (injected)
-        question_generator: ImageQuestionGenerator instance (injected)
-        rag_pipeline:       RAGPipeline instance (injected)
-    """
 
     def __init__(
         self,
@@ -54,18 +45,6 @@ class MultimodalPipeline:
         media_type: str = "jpeg",
         user_question: str | None = None,
     ) -> MultimodalResponse:
-        """
-        Full pipeline: image bytes → structured Socratic response.
-
-        Args:
-            image_bytes:   Raw image data
-            media_type:    MIME sub-type (jpeg, png, webp)
-            user_question: Optional question the student asked about the image.
-                           When given, the Socratic opener answers it (guidingly).
-
-        Returns:
-            MultimodalResponse with questions and tutor message
-        """
         logger.info("Multimodal pipeline: analyzing image ({n} bytes)", n=len(image_bytes))
 
         vision_result = await self._vision.analyze_bytes(image_bytes, media_type)
@@ -114,7 +93,6 @@ class MultimodalPipeline:
         vision: VisionResult,
         questions: list[ImageQuestion],
     ) -> str:
-        """Build the tutor's opening message for an uploaded image."""
         structures_str = (
             ", ".join(vision.structures[:4])
             if vision.structures
@@ -141,11 +119,6 @@ class MultimodalPipeline:
         rag_context: str,
         user_question: str,
     ) -> str:
-        """
-        Build a Socratic reply that addresses the student's question about the
-        image — guiding, not telling. Falls back to the templated opener if the
-        LLM is unavailable (blind-test safety).
-        """
         structures_str = ", ".join(vision.structures[:5]) or "the structures shown"
         prompt = (
             "You are socratOT, a Socratic anatomy & neuroscience tutor for OT students.\n"

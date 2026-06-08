@@ -9,7 +9,6 @@ from src.utils.logger import logger
 
 @dataclass
 class GuardResult:
-    """Result from hallucination check."""
 
     is_grounded: bool
     confidence: float
@@ -18,18 +17,6 @@ class GuardResult:
 
 
 class HallucinationGuard:
-    """
-    Checks if an LLM-generated answer is grounded in retrieved context.
-
-    Two-stage approach:
-    1. Fast keyword overlap check (no LLM call)
-    2. LLM-based semantic verification (when keyword check is ambiguous)
-
-    Args:
-        llm: LangChain LLM instance for semantic verification
-        overlap_threshold: Min keyword overlap ratio to pass fast check
-        use_llm_verification: Whether to use LLM for semantic check
-    """
 
     def __init__(
         self,
@@ -47,17 +34,6 @@ class HallucinationGuard:
         context: str,
         query: str = "",
     ) -> GuardResult:
-        """
-        Check if answer is grounded in context.
-
-        Args:
-            answer:  LLM-generated answer to verify
-            context: Retrieved context the answer should be based on
-            query:   Original query (used for LLM verification prompt)
-
-        Returns:
-            GuardResult with grounding assessment
-        """
         if not context.strip():
             return GuardResult(
                 is_grounded=False,
@@ -88,10 +64,6 @@ class HallucinationGuard:
         )
 
     def _keyword_overlap(self, answer: str, context: str) -> float:
-        """
-        Calculate keyword overlap ratio between answer and context.
-        Strips stopwords and measures substantive word overlap.
-        """
         stopwords = {
             "the",
             "a",
@@ -168,10 +140,6 @@ class HallucinationGuard:
         answer: str,
         context: str,
     ) -> list[str]:
-        """
-        Find answer phrases that have no support in context.
-        Returns up to 3 suspicious phrases.
-        """
         sentences = [s.strip() for s in re.split(r"[.!?]", answer) if len(s.strip()) > 20]
         context_lower = context.lower()
         flagged = []
@@ -191,7 +159,6 @@ class HallucinationGuard:
         context: str,
         query: str,
     ) -> GuardResult:
-        """Use LLM to semantically verify answer grounding."""
         prompt = f"""You are a fact-checker for an educational AI system.
 
 Given the following retrieved context and generated answer,

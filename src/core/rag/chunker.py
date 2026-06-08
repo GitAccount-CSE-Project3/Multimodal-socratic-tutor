@@ -8,13 +8,6 @@ from src.utils.logger import logger
 
 
 class Chunker:
-    """
-    Splits text documents into overlapping chunks.
-
-    Args:
-        chunk_size:    Target token count per chunk (default 512)
-        chunk_overlap: Overlap tokens between chunks (default 64)
-    """
 
     def __init__(
         self,
@@ -26,7 +19,6 @@ class Chunker:
         self._splitter = self._build_splitter()
 
     def _build_splitter(self) -> object:
-        """Build LangChain text splitter — isolated here."""
         try:
             from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -41,7 +33,6 @@ class Chunker:
             return None
 
     def _simple_split(self, text: str) -> list[str]:
-        """Fallback splitter when LangChain is unavailable."""
         chars_per_chunk = self._chunk_size * 4
         overlap_chars = self._chunk_overlap * 4
         chunks = []
@@ -59,18 +50,6 @@ class Chunker:
         topic_tags: list[str] | None = None,
         chapter: str | None = None,
     ) -> list[DocumentChunk]:
-        """
-        Split text into DocumentChunk objects.
-
-        Args:
-            text:       Raw text to split
-            source:     Source identifier (e.g. "openStax/chapter_14.pdf")
-            topic_tags: List of topic tags for filtering
-            chapter:    Chapter name if applicable
-
-        Returns:
-            List of DocumentChunk objects ready for embedding
-        """
         cleaned = clean_text(text)
         if not cleaned:
             logger.warning("Empty text after cleaning for source: {s}", s=source)

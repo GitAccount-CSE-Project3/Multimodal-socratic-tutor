@@ -12,7 +12,6 @@ from src.utils.logger import logger
 
 @dataclass
 class VisionResult:
-    """Result from one image analysis."""
 
     structures: list[str]
     region: str
@@ -40,12 +39,6 @@ Focus on structures relevant to Occupational Therapy practice."""
 
 
 class VisionAnalyzer:
-    """
-    Analyses anatomy images using GPT-4o vision.
-
-    Args:
-        llm: Optional pre-built vision LLM (injected for testing)
-    """
 
     def __init__(self, llm: object | None = None) -> None:
         self._llm = llm
@@ -59,7 +52,6 @@ class VisionAnalyzer:
         return self._llm
 
     async def analyze_file(self, image_path: Path) -> VisionResult:
-        """Analyze an image file on disk."""
         if not image_path.exists():
             return VisionResult(
                 structures=[],
@@ -80,7 +72,6 @@ class VisionAnalyzer:
         image_bytes: bytes,
         media_type: str = "jpeg",
     ) -> VisionResult:
-        """Analyze raw image bytes — used for Streamlit uploaded files."""
         b64 = base64.b64encode(image_bytes).decode("utf-8")
         return await self._call_vision_llm(b64, media_type)
 
@@ -89,7 +80,6 @@ class VisionAnalyzer:
         b64_image: str,
         media_type: str,
     ) -> VisionResult:
-        """Send the image to the OpenAI vision model."""
         return await self._call_openai(b64_image, media_type)
 
     async def _call_openai(
@@ -97,7 +87,6 @@ class VisionAnalyzer:
         b64_image: str,
         media_type: str,
     ) -> VisionResult:
-        """Call GPT-4o with base64 image."""
         try:
             from openai import OpenAI
 
@@ -143,7 +132,6 @@ class VisionAnalyzer:
             )
 
     def _parse_result(self, raw: str) -> VisionResult:
-        """Parse LLM JSON response into VisionResult."""
         parsed = safe_parse_json(raw)
 
         if not parsed:
@@ -168,7 +156,6 @@ class VisionAnalyzer:
 
     @staticmethod
     def _extract_structures_from_text(text: str) -> list[str]:
-        """Extract structure names from free text as fallback."""
         anatomy_keywords = [
             "cerebellum",
             "cortex",

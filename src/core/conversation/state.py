@@ -12,10 +12,6 @@ PHASE_CONFIG: dict[str, tuple[str, str, str]] = {
 
 
 class ConversationPhase(str, Enum):
-    """
-    Four sequential phases of every socratOT session.
-    Transitions: RAPPORT → TUTORING → ASSESSMENT → MASTERY
-    """
 
     RAPPORT = "rapport"
     TUTORING = "tutoring"
@@ -58,7 +54,6 @@ _PHASE_ORDER: tuple[ConversationPhase, ...] = (
 
 
 class HintLevel(int, Enum):
-    """Progressive hint levels within the TUTORING phase."""
 
     NONE = 0
     LEVEL_1 = 1
@@ -67,7 +62,6 @@ class HintLevel(int, Enum):
 
 
 class ResponseQuality(str, Enum):
-    """Classification of a student response."""
 
     CORRECT = "correct"
     PARTIAL = "partial"
@@ -82,7 +76,6 @@ class ResponseQuality(str, Enum):
 
 
 class TurnRecord(NamedTuple):
-    """Immutable record of one conversation turn."""
 
     turn_number: int
     student_input: str

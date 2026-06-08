@@ -73,7 +73,6 @@ def _radar_chart(scores: dict[str, float]) -> None:
 
 
 def _load_memory_scores(student_id: str) -> dict[str, float]:
-    """Load long-term mastery scores from StudentMemory."""
     try:
         import asyncio
 

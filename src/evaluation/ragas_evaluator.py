@@ -14,7 +14,6 @@ from src.utils.logger import logger
 
 @dataclass
 class RagasResult:
-    """Results from one RAGAS evaluation run."""
 
     faithfulness: float = 0.0
     answer_relevance: float = 0.0
@@ -39,13 +38,6 @@ class RagasResult:
 
 
 class RagasEvaluator:
-    """
-    Runs RAGAS evaluation on socratOT ground truth dataset.
-
-    Args:
-        dataset_path: Path to ground_truth.jsonl
-        n_samples:    Number of QA pairs to evaluate (None = all)
-    """
 
     def __init__(
         self,
@@ -56,10 +48,6 @@ class RagasEvaluator:
         self._n_samples = n_samples
 
     def _load_dataset(self) -> list[dict]:
-        """
-        Load ground truth QA pairs sampled evenly across topics.
-        Excludes clinical_application — not in the anatomy corpus.
-        """
         all_samples = []
         with open(self._dataset_path) as f:
             for line in f:
@@ -108,10 +96,6 @@ class RagasEvaluator:
         return sampled
 
     async def _get_rag_response(self, question: str) -> tuple[str, str, list[str]]:
-        """
-        Run question through RAG pipeline.
-        Returns (answer, context, citations).
-        """
         try:
             from src.core.rag.pipeline import RAGPipeline
 
@@ -127,7 +111,6 @@ class RagasEvaluator:
             return "", "", []
 
     async def run(self) -> RagasResult:
-        """Run full RAGAS evaluation. Returns RagasResult."""
         samples = self._load_dataset()
 
         try:
@@ -140,7 +123,6 @@ class RagasEvaluator:
             return await self._run_manual_metrics(samples)
 
     async def _run_ragas_library(self, samples: list[dict]) -> RagasResult:
-        """Use official ragas library for evaluation."""
         from datasets import Dataset
         from ragas import evaluate
         from ragas.metrics import answer_relevancy, context_recall, faithfulness
@@ -185,10 +167,6 @@ class RagasEvaluator:
         )
 
     async def _run_manual_metrics(self, samples: list[dict]) -> RagasResult:
-        """
-        Manual metric computation when ragas library unavailable.
-        Uses keyword overlap as proxy for faithfulness and relevance.
-        """
         import re
 
         def keywords(text: str) -> set:

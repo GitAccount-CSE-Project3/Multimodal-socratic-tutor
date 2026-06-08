@@ -14,10 +14,6 @@ from src.utils.logger import logger
 
 
 class ConversationManager:
-    """
-    Manages full lifecycle of a socratOT session.
-    Phase 4: wired to MemoryManager for cross-session memory.
-    """
 
     def __init__(
         self,
@@ -41,10 +37,6 @@ class ConversationManager:
         student_id: str,
         student_name: str = "",
     ) -> tuple[str, str]:
-        """
-        Create a new session. Returns (session_id, personalised_opener).
-        Phase 4: loads memory and generates personalised opener.
-        """
         safe_id = sanitize_student_id(student_id)
         session_id = await self._store.create_session(safe_id)
 
@@ -93,7 +85,6 @@ class ConversationManager:
         topic: str | None = None,
         mastery_score: float | None = None,
     ) -> dict:
-        """Record one completed turn. Phase 4: optionally updates memory score."""
         state = await self._store.get_session(session_id)
         current_phase = ConversationPhase(state["phase"])
         current_turn = state["turn_count"] + 1
@@ -198,7 +189,6 @@ class ConversationManager:
             return False
 
     async def get_student_memory(self, student_id: str) -> dict:
-        """Return student's long-term memory as dict for UI display."""
         try:
             return await self._get_memory().get_mastery_scores(student_id)
         except Exception:

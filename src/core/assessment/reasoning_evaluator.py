@@ -8,12 +8,6 @@ from src.utils.logger import logger
 
 
 class ReasoningEvaluator:
-    """
-    LLM-as-judge evaluator for clinical reasoning responses.
-
-    Args:
-        llm: Optional LLM (injected for testing)
-    """
 
     def __init__(self, llm: object | None = None) -> None:
         self._llm = llm
@@ -30,16 +24,6 @@ class ReasoningEvaluator:
         student_response: str,
         scenario: ClinicalScenario,
     ) -> ReasoningScore:
-        """
-        Score a student's clinical reasoning response.
-
-        Args:
-            student_response: Student's answer to the scenario question
-            scenario:         The ClinicalScenario being assessed
-
-        Returns:
-            ReasoningScore with sub-scores and actionable feedback
-        """
         if not student_response.strip():
             return ReasoningScore(
                 clinical_accuracy=0,
@@ -103,7 +87,6 @@ Scoring guide:
         response: str,
         scenario: ClinicalScenario,
     ) -> ReasoningScore:
-        """Simple keyword overlap scoring when LLM fails."""
         import re
 
         stopwords = {"the", "a", "an", "is", "are", "to", "of", "in", "and", "or"}

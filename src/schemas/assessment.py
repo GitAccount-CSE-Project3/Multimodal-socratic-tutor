@@ -15,7 +15,6 @@ class MasteryLevel(str, Enum):
 
 
 class ClinicalScenario(BaseSchema):
-    """A generated clinical OT scenario for assessment."""
 
     topic: str
     scenario_text: str
@@ -26,7 +25,6 @@ class ClinicalScenario(BaseSchema):
 
 
 class ReasoningScore(BaseSchema):
-    """Evaluation result for one student response."""
 
     clinical_accuracy: int = Field(ge=0, le=40)
     reasoning_quality: int = Field(ge=0, le=40)
@@ -51,7 +49,6 @@ class ReasoningScore(BaseSchema):
 
 
 class TopicMastery(BaseSchema):
-    """Per-topic mastery tracking for one student."""
 
     topic: str
     score: float = Field(default=0.0, ge=0.0, le=100.0)
@@ -60,7 +57,6 @@ class TopicMastery(BaseSchema):
     mastery_level: MasteryLevel = MasteryLevel.NOVICE
 
     def update(self, new_score: float) -> None:
-        """Exponential weighted average — 70% existing + 30% new."""
         self.last_score = new_score
         self.attempts += 1
         self.score = round(self.score * 0.7 + new_score * 0.3, 1)
@@ -78,7 +74,6 @@ class TopicMastery(BaseSchema):
 
 
 class PerformanceSummary(BaseSchema):
-    """End-of-session performance summary."""
 
     student_id: str
     session_id: str

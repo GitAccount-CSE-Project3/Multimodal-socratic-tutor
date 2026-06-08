@@ -8,12 +8,6 @@ from src.utils.logger import logger
 
 
 class Embedder:
-    """
-    Async embedder for DocumentChunk objects.
-
-    Args:
-        batch_size: Number of chunks to embed per batch (default 32)
-    """
 
     def __init__(self, batch_size: int = 32) -> None:
         self._batch_size = batch_size
@@ -23,18 +17,6 @@ class Embedder:
         self,
         chunks: list[DocumentChunk],
     ) -> list[list[float]]:
-        """
-        Embed a list of DocumentChunks in batches.
-
-        Args:
-            chunks: List of DocumentChunk objects to embed
-
-        Returns:
-            List of embedding vectors (one per chunk)
-
-        Raises:
-            EmbeddingError: If embedding fails
-        """
         if not chunks:
             return []
 
@@ -72,15 +54,6 @@ class Embedder:
         return all_embeddings
 
     async def embed_query(self, query: str) -> list[float]:
-        """
-        Embed a single query string for retrieval.
-
-        Args:
-            query: The search query text
-
-        Returns:
-            Embedding vector for the query
-        """
         try:
             return await self._model.encode_single(query)
         except Exception as e:
@@ -95,6 +68,5 @@ class Embedder:
 
     @property
     def embedding_dim(self) -> int:
-        """Return embedding dimension (loads model if needed)."""
         self._model._load()
         return 384

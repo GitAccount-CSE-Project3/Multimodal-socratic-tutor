@@ -12,10 +12,6 @@ _ST_EMBEDDING_DIM: int = 384
 
 
 class EmbeddingModel:
-    """
-    Async embedding wrapper supporting OpenAI and SentenceTransformers.
-    Loaded lazily on first encode() call.
-    """
 
     def __init__(self) -> None:
         self._model: object = None
@@ -25,7 +21,6 @@ class EmbeddingModel:
         self._dim: int = 0
 
     def _load(self) -> None:
-        """Lazily initialise the embedding backend."""
         if self._model is not None or self._client is not None:
             return
 
@@ -38,7 +33,6 @@ class EmbeddingModel:
             self._load_sentence_transformers(settings)
 
     def _load_openai(self, settings: object) -> None:
-        """Load OpenAI embedding client."""
         try:
             from openai import OpenAI
 
@@ -61,7 +55,6 @@ class EmbeddingModel:
             ) from e
 
     def _load_sentence_transformers(self, settings: object) -> None:
-        """Load SentenceTransformer model (local fallback)."""
         try:
             from sentence_transformers import SentenceTransformer
 
@@ -82,7 +75,6 @@ class EmbeddingModel:
 
     @staticmethod
     def _resolve_device(device: object) -> str:
-        """Resolve embedding device with fallback to CPU."""
         device_val = device.value if hasattr(device, "value") else str(device)
         if device_val == "mps":
             try:
@@ -101,10 +93,6 @@ class EmbeddingModel:
         return "cpu"
 
     async def encode(self, texts: list[str]) -> list[list[float]]:
-        """
-        Async encode a list of texts into embedding vectors.
-        Offloads CPU-bound work to thread pool.
-        """
         self._load()
         loop = asyncio.get_running_loop()
 
@@ -122,7 +110,6 @@ class EmbeddingModel:
             raise EmbeddingError("Embedding failed", detail=str(e)) from e
 
     def _encode_openai(self, texts: list[str]) -> list[list[float]]:
-        """Call OpenAI Embeddings API."""
         response = self._client.embeddings.create(  # type: ignore[union-attr]
             model=self._model_name,
             input=texts,
@@ -130,7 +117,6 @@ class EmbeddingModel:
         return [item.embedding for item in response.data]
 
     def _encode_st(self, texts: list[str]) -> list[list[float]]:
-        """Encode with SentenceTransformer."""
         embeddings = self._model.encode(  # type: ignore[union-attr]
             texts,
             show_progress_bar=False,
@@ -139,7 +125,6 @@ class EmbeddingModel:
         return embeddings.tolist()
 
     async def encode_single(self, text: str) -> list[float]:
-        """Encode a single string."""
         results = await self.encode([text])
         return results[0]
 
@@ -149,11 +134,9 @@ class EmbeddingModel:
 
     @property
     def dim(self) -> int:
-        """Embedding dimension."""
         return self._dim
 
 
 @lru_cache(maxsize=1)
 def get_embedding_model() -> EmbeddingModel:
-    """Cached EmbeddingModel singleton."""
     return EmbeddingModel()

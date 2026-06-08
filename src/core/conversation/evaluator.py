@@ -18,7 +18,6 @@ from src.utils.logger import logger
 
 @dataclass
 class EvaluationResult:
-    """Result from evaluating one student response."""
 
     quality: ResponseQuality
     score: float
@@ -29,16 +28,6 @@ class EvaluationResult:
 
 
 class StudentResponseEvaluator:
-    """
-    Evaluates student responses against reference answers.
-
-    Two-stage approach:
-      1. Keyword overlap check (fast, no LLM)
-      2. LLM-as-judge for semantic evaluation (full quality score)
-
-    Args:
-        llm: LangChain LLM instance (injected)
-    """
 
     def __init__(self, llm: object | None = None) -> None:
         self._llm = llm
@@ -57,18 +46,6 @@ class StudentResponseEvaluator:
         context: str = "",
         topic: str = "",
     ) -> EvaluationResult:
-        """
-        Evaluate a student response against the reference answer.
-
-        Args:
-            student_response:  What the student said
-            reference_answer:  The correct/expected answer
-            context:           RAG context used in the conversation
-            topic:             Current anatomy topic
-
-        Returns:
-            EvaluationResult with quality, score, and feedback
-        """
         if not student_response.strip():
             return EvaluationResult(
                 quality=ResponseQuality.UNCLEAR,
@@ -102,7 +79,6 @@ class StudentResponseEvaluator:
         topic: str,
         initial_overlap: float,
     ) -> EvaluationResult:
-        """Use LLM judge to evaluate semantic quality."""
         prompt = f"""You are an expert OT anatomy tutor evaluating a student response.
 
 Topic: {topic or "Anatomy/Neuroscience"}
@@ -155,7 +131,6 @@ Evaluate the student response and return ONLY valid JSON:
         student_response: str,
         overlap: float,
     ) -> EvaluationResult:
-        """Keyword-based fallback when LLM evaluation fails."""
         if overlap >= 0.6:
             return EvaluationResult(
                 quality=ResponseQuality.CORRECT,
@@ -185,7 +160,6 @@ Evaluate the student response and return ONLY valid JSON:
             )
 
     def keyword_overlap(self, response: str, reference: str) -> float:
-        """Calculate keyword overlap ratio between response and reference."""
 
         def keywords(text: str) -> set:
             words = re.findall(r"\b[a-zA-Z]{4,}\b", text.lower())

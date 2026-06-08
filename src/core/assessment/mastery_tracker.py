@@ -13,14 +13,6 @@ from src.utils.logger import logger
 
 
 class MasteryTracker:
-    """
-    Tracks mastery across topics for one student session.
-
-    Args:
-        memory_manager: MemoryManager instance (injected)
-        evaluator:      ReasoningEvaluator (injected)
-        generator:      ClinicalScenarioGenerator (injected)
-    """
 
     def __init__(
         self,
@@ -39,15 +31,6 @@ class MasteryTracker:
         topic: str,
         student_response: str,
     ) -> tuple[ReasoningScore, ClinicalScenario]:
-        """
-        Run a full assessment turn:
-          1. Generate a clinical scenario for the topic
-          2. Evaluate the student's response
-          3. Update mastery in memory
-
-        Returns:
-            (ReasoningScore, ClinicalScenario) tuple
-        """
         scenario = await self._generator.generate(topic)
 
         score = await self._evaluator.evaluate(student_response, scenario)
@@ -76,17 +59,6 @@ class MasteryTracker:
         session_id: str,
         total_turns: int,
     ) -> PerformanceSummary:
-        """
-        Generate end-of-session performance summary.
-
-        Args:
-            student_id:   Student identifier
-            session_id:   Session identifier
-            total_turns:  Total turns in session
-
-        Returns:
-            PerformanceSummary with scores, recommendations, next steps
-        """
         scores = {t: m.score for t, m in self._session_mastery.items()}
 
         memory_scores = await self._memory.get_mastery_scores(student_id)

@@ -23,7 +23,6 @@ async def _run_vision_pipeline(
     media_type: str,
     user_question: str | None = None,
 ) -> dict:
-    """Run multimodal pipeline and return result dict."""
     try:
         from src.core.multimodal.pipeline import MultimodalPipeline
 

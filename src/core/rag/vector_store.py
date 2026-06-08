@@ -14,11 +14,9 @@ from src.utils.logger import logger
 
 
 class VectorStore(ABC):
-    """Abstract vector store — all implementations must follow this contract."""
 
     @abstractmethod
     async def add_chunks(self, chunks: list[DocumentChunk]) -> None:
-        """Embed and store a list of DocumentChunks."""
         ...
 
     @abstractmethod
@@ -28,30 +26,18 @@ class VectorStore(ABC):
         top_k: int = 5,
         min_score: float = 0.0,
     ) -> list[RetrievedChunk]:
-        """Search for top_k most similar chunks to query."""
         ...
 
     @abstractmethod
     async def count(self) -> int:
-        """Return number of stored chunks."""
         ...
 
     @abstractmethod
     async def reset(self) -> None:
-        """Clear all stored chunks."""
         ...
 
 
 def _make_noop_embedding_function() -> object:
-    """
-    A no-op Chroma embedding function.
-
-    We compute all embeddings ourselves via the OpenAI ``Embedder`` and always
-    pass ``embeddings`` / ``query_embeddings`` to Chroma explicitly, so Chroma
-    never needs to embed anything. Supplying this avoids Chroma falling back to
-    its built-in ONNX model (``ONNXMiniLM_L6_V2``), which would require the
-    heavy ``onnxruntime`` package to be installed just to open a collection.
-    """
     from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
 
     class _NoOpEmbeddingFunction(EmbeddingFunction):
@@ -65,10 +51,6 @@ def _make_noop_embedding_function() -> object:
 
 
 class ChromaVectorStore(VectorStore):
-    """
-    ChromaDB-backed vector store with persistent local storage.
-    Primary vector store for socratOT.
-    """
 
     COLLECTION_NAME = "socratot_anatomy"
 
@@ -80,7 +62,6 @@ class ChromaVectorStore(VectorStore):
         self._collection: object = None
 
     def _get_collection(self) -> object:
-        """Lazily initialise ChromaDB client and collection."""
         if self._collection is not None:
             return self._collection
 
@@ -123,7 +104,6 @@ class ChromaVectorStore(VectorStore):
             ) from e
 
     async def add_chunks(self, chunks: list[DocumentChunk]) -> None:
-        """Embed chunks and add to ChromaDB collection."""
         if not chunks:
             return
 
@@ -161,7 +141,6 @@ class ChromaVectorStore(VectorStore):
         top_k: int = 5,
         min_score: float = 0.0,
     ) -> list[RetrievedChunk]:
-        """Semantic search — returns top_k most similar chunks."""
         collection = self._get_collection()
 
         count = await self.count()
@@ -213,7 +192,6 @@ class ChromaVectorStore(VectorStore):
         return retrieved
 
     async def count(self) -> int:
-        """Return number of stored chunks."""
         try:
             collection = self._get_collection()
             loop = asyncio.get_running_loop()
@@ -222,7 +200,6 @@ class ChromaVectorStore(VectorStore):
             return 0
 
     async def reset(self) -> None:
-        """Delete and recreate the collection."""
         if self._client is not None:
             self._client.delete_collection(self.COLLECTION_NAME)
             self._collection = None
@@ -230,10 +207,6 @@ class ChromaVectorStore(VectorStore):
 
 
 class FAISSVectorStore(VectorStore):
-    """
-    FAISS-backed vector store for benchmark comparison.
-    In-memory with optional disk persistence.
-    """
 
     def __init__(self) -> None:
         settings = get_settings()
@@ -243,7 +216,6 @@ class FAISSVectorStore(VectorStore):
         self._chunks: list[DocumentChunk] = []
 
     def _get_index(self, dim: int = 384) -> object:
-        """Lazily initialise FAISS index."""
         if self._index is not None:
             return self._index
 
@@ -344,10 +316,6 @@ class FAISSVectorStore(VectorStore):
 
 @lru_cache(maxsize=1)
 def get_vector_store() -> VectorStore:
-    """
-    Return cached VectorStore singleton based on config.
-    Use this everywhere — never instantiate directly.
-    """
     settings = get_settings()
     if settings.vector_store_type == VectorStoreType.FAISS:
         logger.info("Using FAISS vector store")

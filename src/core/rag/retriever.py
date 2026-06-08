@@ -9,14 +9,6 @@ from src.utils.logger import logger
 
 
 class Retriever:
-    """
-    Retrieves relevant chunks from the vector store for a given query.
-
-    Args:
-        vector_store: VectorStore instance (injected — not created internally)
-        top_k:        Number of chunks to retrieve
-        min_score:    Minimum relevance score threshold (0-1)
-    """
 
     def __init__(
         self,
@@ -30,18 +22,6 @@ class Retriever:
         self._min_score = min_score or settings.min_relevance_score
 
     async def retrieve(self, query: str) -> RetrievalResult:
-        """
-        Retrieve top-K relevant chunks and assemble context.
-
-        Args:
-            query: The student's question or search query
-
-        Returns:
-            RetrievalResult with chunks, assembled context, and citations
-
-        Raises:
-            RetrievalError: If retrieval fails
-        """
         if not query or not query.strip():
             raise RetrievalError("Query cannot be empty")
 
@@ -76,10 +56,6 @@ class Retriever:
         return result
 
     def _assemble_context(self, chunks: list[RetrievedChunk]) -> str:
-        """
-        Assemble retrieved chunks into a single context string for LLM.
-        Ordered by relevance score (highest first).
-        """
         if not chunks:
             return ""
 
@@ -94,7 +70,6 @@ class Retriever:
         return "\n\n---\n\n".join(parts)
 
     def _extract_citations(self, chunks: list[RetrievedChunk]) -> list[str]:
-        """Extract unique source citations from retrieved chunks."""
         seen = set()
         citations = []
         for retrieved in chunks:

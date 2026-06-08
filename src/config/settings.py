@@ -154,18 +154,9 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    """
-    Cached Settings singleton.
-    Usage: from src.config.settings import get_settings; s = get_settings()
-    """
     return Settings()
 
 def _load_streamlit_secrets() -> None:
-    """
-    On Streamlit Cloud, secrets are in st.secrets not .env.
-    Call this once at startup to inject them into os.environ.
-    Safe to call locally — silently no-ops if streamlit not running.
-    """
     try:
         import streamlit as st
 

@@ -13,7 +13,6 @@ from src.utils.logger import logger
 
 @dataclass
 class SocraticResponse:
-    """Result from one SocraticEngine call."""
 
     content: str
     hint_level: HintLevel
@@ -27,13 +26,6 @@ class SocraticResponse:
 
 
 class SocraticEngine:
-    """
-    Generates Socratic tutoring responses for text and image inputs.
-
-    Args:
-        rag_pipeline: RAGPipeline (injected)
-        llm:          LangChain LLM (injected)
-    """
 
     BYPASS_RESPONSE = (
         "I understand you want the answer directly — that's natural! "
@@ -59,7 +51,6 @@ class SocraticEngine:
         return self._llm
 
     def _get_multimodal(self) -> object:
-        """Lazily load MultimodalPipeline."""
         if self._multimodal is None:
             from src.core.multimodal.pipeline import MultimodalPipeline
 
@@ -74,11 +65,6 @@ class SocraticEngine:
         session_state: dict | None = None,
         user_question: str | None = None,
     ) -> SocraticResponse:
-        """
-        Generate Socratic response for an uploaded anatomy image.
-        Routes through MultimodalPipeline. If the student typed a question
-        alongside the image, it is answered guidingly.
-        """
         logger.info("SocraticEngine: image input ({n} bytes)", n=len(image_bytes))
 
         pipeline = self._get_multimodal()
@@ -105,7 +91,6 @@ class SocraticEngine:
         session_state: dict,
         phase: ConversationPhase = ConversationPhase.TUTORING,
     ) -> SocraticResponse:
-        """Generate appropriate Socratic response for text input."""
         current_hint = HintLevel(session_state.get("hint_level", 0))
         is_bypass = detect_bypass_attempt(student_input)
 
@@ -268,11 +253,6 @@ Ask at most ONE question. Do NOT lecture or give facts yet."""
         return hint_level >= HintLevel.LEVEL_2
 
     def _build_retrieval_query(self, student_input: str, history: list) -> str:
-        """
-        Make elliptical follow-ups retrievable by prepending the most recent
-        substantive user question. Self-contained questions (those with a clear
-        topic) are used as-is.
-        """
         if self.detect_topic(student_input):
             return student_input
         t = student_input.lower().strip()
