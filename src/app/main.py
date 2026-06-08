@@ -79,6 +79,12 @@ def _route() -> None:
     elif page == "images":
         from src.app.views import image_analysis
         image_analysis.render()
+    elif page == "assessment":
+        from src.app.views import assessment
+        assessment.render()
+    elif page == "evaluation":
+        from src.app.views import evaluation_dashboard
+        evaluation_dashboard.render()
     elif page == "settings":
         from src.app.views import settings_page
         settings_page.render()

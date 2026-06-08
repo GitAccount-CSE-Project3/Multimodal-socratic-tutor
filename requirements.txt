@@ -15,6 +15,7 @@ langchain-core
 
 chromadb==0.5.15
 faiss-cpu==1.8.0.post1
+rank-bm25==0.2.2
 
 sentence-transformers==3.1.1
 transformers==4.44.2

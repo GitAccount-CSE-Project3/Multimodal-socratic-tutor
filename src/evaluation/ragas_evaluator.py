@@ -17,20 +17,18 @@ class RagasResult:
 
     faithfulness: float = 0.0
     answer_relevance: float = 0.0
-    context_recall: float = 0.0
     n_samples: int = 0
     failed_samples: int = 0
     per_sample: list = field(default_factory=list)
 
     @property
     def average(self) -> float:
-        return round((self.faithfulness + self.answer_relevance + self.context_recall) / 3, 3)
+        return round((self.faithfulness + self.answer_relevance) / 2, 3)
 
     def to_dict(self) -> dict:
         return {
             "faithfulness": round(self.faithfulness, 3),
             "answer_relevance": round(self.answer_relevance, 3),
-            "context_recall": round(self.context_recall, 3),
             "average": self.average,
             "n_samples": self.n_samples,
             "failed_samples": self.failed_samples,
@@ -125,7 +123,7 @@ class RagasEvaluator:
     async def _run_ragas_library(self, samples: list[dict]) -> RagasResult:
         from datasets import Dataset
         from ragas import evaluate
-        from ragas.metrics import answer_relevancy, context_recall, faithfulness
+        from ragas.metrics import answer_relevancy, faithfulness
 
         print(f"  Running RAGAS on {len(samples)} samples...")
 
@@ -152,7 +150,7 @@ class RagasEvaluator:
             None,
             lambda: evaluate(
                 dataset,
-                metrics=[faithfulness, answer_relevancy, context_recall],
+                metrics=[faithfulness, answer_relevancy],
             ),
         )
 
@@ -160,7 +158,6 @@ class RagasEvaluator:
         return RagasResult(
             faithfulness=float(df["faithfulness"].mean()),
             answer_relevance=float(df["answer_relevancy"].mean()),
-            context_recall=float(df["context_recall"].mean()),
             n_samples=len(samples),
             failed_samples=int(df.isnull().any(axis=1).sum()),
             per_sample=df.to_dict(orient="records"),
@@ -173,7 +170,7 @@ class RagasEvaluator:
             stops = {"the", "a", "an", "is", "are", "to", "of", "in", "and", "or", "it", "its"}
             return {w for w in re.findall(r"\b[a-zA-Z]{4,}\b", text.lower()) if w not in stops}
 
-        faith_scores, rel_scores, recall_scores = [], [], []
+        faith_scores, rel_scores = [], []
         per_sample = []
         failed = 0
 
@@ -188,25 +185,19 @@ class RagasEvaluator:
 
                 ans_kw = keywords(answer)
                 ctx_kw = keywords(context)
-                ref_kw = keywords(s["reference_answer"])
                 q_kw = keywords(s["question"])
 
                 faith = len(ans_kw & ctx_kw) / max(len(ans_kw), 1)
-
                 relevance = len(ans_kw & q_kw) / max(len(q_kw), 1)
-
-                recall = len(ref_kw & ctx_kw) / max(len(ref_kw), 1)
 
                 faith_scores.append(faith)
                 rel_scores.append(relevance)
-                recall_scores.append(recall)
 
                 per_sample.append(
                     {
                         "question": s["question"][:60],
                         "faithfulness": round(faith, 3),
                         "answer_relevancy": round(relevance, 3),
-                        "context_recall": round(recall, 3),
                     }
                 )
             except Exception as e:
@@ -218,7 +209,6 @@ class RagasEvaluator:
         return RagasResult(
             faithfulness=sum(faith_scores) / max(n, 1),
             answer_relevance=sum(rel_scores) / max(n, 1),
-            context_recall=sum(recall_scores) / max(n, 1),
             n_samples=len(samples),
             failed_samples=failed,
             per_sample=per_sample,
@@ -238,7 +228,6 @@ async def main() -> None:
     print("=" * 60)
     print(f"  Faithfulness:     {result.faithfulness:.3f}")
     print(f"  Answer relevance: {result.answer_relevance:.3f}")
-    print(f"  Context recall:   {result.context_recall:.3f}")
     print(f"  Average:          {result.average:.3f}")
     print(f"  Samples:          {result.n_samples} ({result.failed_samples} failed)")
     print("=" * 60 + "\n")

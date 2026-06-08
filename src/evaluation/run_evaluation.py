@@ -37,7 +37,6 @@ async def run_all(quick: bool = False) -> dict:
     results["ragas"] = r_res.to_dict()
     print(f"  Faithfulness:     {r_res.faithfulness:.3f}")
     print(f"  Answer relevance: {r_res.answer_relevance:.3f}")
-    print(f"  Context recall:   {r_res.context_recall:.3f}")
     print(f"  Average:          {r_res.average:.3f}")
 
     print("\n[ 3/3 ] Baseline comparison")
@@ -135,7 +134,6 @@ covered by the Socratic compliance evaluation above.
 |--------|-------|----------------|
 | Faithfulness | {ragas.get("faithfulness", 0):.3f} | Answer grounded in retrieved context |
 | Answer relevance | {ragas.get("answer_relevance", 0):.3f} | Answer addresses the question |
-| Context recall | {ragas.get("context_recall", 0):.3f} | Retrieval found relevant chunks |
 | **Average** | **{ragas.get("average", 0):.3f}** | Overall RAG quality |
 
 ---

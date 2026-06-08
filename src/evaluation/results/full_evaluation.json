@@ -11,10 +11,9 @@
     "false_positive_cases": []
   },
   "ragas": {
-    "faithfulness": 0.88,
-    "answer_relevance": 0.722,
-    "context_recall": 0.583,
-    "average": 0.728,
+    "faithfulness": 0.95,
+    "answer_relevance": 0.731,
+    "average": 0.84,
     "n_samples": 20,
     "failed_samples": 0
   },

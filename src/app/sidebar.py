@@ -29,7 +29,7 @@ def render_sidebar() -> None:
         )
 
         st.write("**Navigation**")
-        pages = {"chat": "Tutor Chat", "dashboard": "Dashboard", "images": "Image Analysis", "settings": "Settings"}
+        pages = {"chat": "Tutor Chat", "dashboard": "Dashboard", "images": "Image Analysis", "assessment": "Clinical Assessment", "evaluation": "Evaluation", "settings": "Settings"}
         for key, label in pages.items():
             active = st.session_state.current_page == key
             if st.button(label, key=f"nav_{key}", width="stretch", type="primary" if active else "secondary"):
