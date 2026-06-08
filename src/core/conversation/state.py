@@ -33,12 +33,7 @@ class ConversationPhase(str, Enum):
 
     @property
     def display(self) -> str:
-        return {
-            "rapport": "Building rapport",
-            "tutoring": "Socratic tutoring",
-            "assessment": "Clinical assessment",
-            "mastery": "Mastery summary",
-        }[self.value]
+        return PHASE_CONFIG[self.value][0]
 
     @property
     def color(self) -> str:
