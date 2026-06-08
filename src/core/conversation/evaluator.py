@@ -15,6 +15,13 @@ import re
 from dataclasses import dataclass
 
 from src.core.conversation.state import ResponseQuality
+
+_STOPWORDS: frozenset[str] = frozenset({
+    "the", "a", "an", "is", "are", "was", "were", "be", "been",
+    "have", "has", "had", "do", "does", "did", "will", "would",
+    "to", "of", "in", "for", "on", "with", "at", "by", "and",
+    "or", "but", "not", "this", "that", "it", "its", "which",
+})
 from src.utils.helpers import safe_parse_json, truncate_text
 from src.utils.logger import logger
 
@@ -191,46 +198,10 @@ Evaluate the student response and return ONLY valid JSON:
 
     def keyword_overlap(self, response: str, reference: str) -> float:
         """Calculate keyword overlap ratio between response and reference."""
-        stopwords = {
-            "the",
-            "a",
-            "an",
-            "is",
-            "are",
-            "was",
-            "were",
-            "be",
-            "been",
-            "have",
-            "has",
-            "had",
-            "do",
-            "does",
-            "did",
-            "will",
-            "would",
-            "to",
-            "of",
-            "in",
-            "for",
-            "on",
-            "with",
-            "at",
-            "by",
-            "and",
-            "or",
-            "but",
-            "not",
-            "this",
-            "that",
-            "it",
-            "its",
-            "which",
-        }
 
         def keywords(text: str) -> set:
             words = re.findall(r"\b[a-zA-Z]{4,}\b", text.lower())
-            return {w for w in words if w not in stopwords}
+            return {w for w in words if w not in _STOPWORDS}
 
         resp_kw = keywords(response)
         ref_kw = keywords(reference)
