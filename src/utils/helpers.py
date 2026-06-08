@@ -7,6 +7,18 @@ All functions are stateless and independently testable.
 
 from __future__ import annotations
 
+__all__ = [
+    "chunk_list",
+    "clean_text",
+    "detect_bypass_attempt",
+    "ensure_dir",
+    "format_citations",
+    "hash_string",
+    "safe_parse_json",
+    "sanitize_student_id",
+    "truncate_text",
+]
+
 import hashlib
 import json
 import re
