@@ -1,6 +1,9 @@
 # ─────────────────────────────────────────────────────────────
 #  socratOT — Python 3.11 | AWS EC2 Linux x86_64
 #  pip install -r requirements.txt
+#
+#  For Apple Silicon (M-series) use EMBEDDING_DEVICE=mps in .env
+#  For CUDA GPU use EMBEDDING_DEVICE=cuda in .env
 # ─────────────────────────────────────────────────────────────
 
 # ── Build tools (must be first) ───────────────
