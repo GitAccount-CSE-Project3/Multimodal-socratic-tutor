@@ -1,10 +1,4 @@
-"""
-src/app/views/image_analysis.py
-
-Image analysis page.
-Accepts anatomy image uploads, runs GPT-4o vision, and generates
-Socratic questions. Displays identified structures and local corpus.
-"""
+# image_analysis.py - upload anatomy images and get Socratic questions
 
 from __future__ import annotations
 
@@ -22,18 +16,7 @@ MUTED = "#94A3B8"
 
 
 def _section_title(text: str) -> None:
-    st.markdown(
-        f"<div style='font-size:14px;font-weight:600;color:{NAVY};margin-bottom:8px'>{text}</div>",
-        unsafe_allow_html=True,
-    )
-
-
-def _structure_badge(structure: str) -> str:
-    return (
-        f"<span style='background:rgba(99,102,241,.16);color:#A5B4FC;padding:3px 11px;"
-        f"border:1px solid rgba(99,102,241,.28);border-radius:12px;font-size:12px;"
-        f"font-weight:500;margin:2px;display:inline-block'>{structure}</span>"
-    )
+    st.subheader(text)
 
 
 async def _run_vision_pipeline(
@@ -64,15 +47,8 @@ async def _run_vision_pipeline(
 
 
 def render() -> None:
-    """Main image analysis page."""
-    st.markdown(
-        f"<h2 style='font-size:22px;font-weight:600;color:{NAVY};margin-bottom:4px'>"
-        f"Anatomical Image Analysis</h2>"
-        f"<p style='color:{MUTED};margin-bottom:0'>"
-        f"Upload any anatomy diagram — GPT-4o identifies structures "
-        f"and generates Socratic questions</p>",
-        unsafe_allow_html=True,
-    )
+    st.header("Anatomical Image Analysis")
+    st.caption("Upload any anatomy diagram — GPT-4o identifies structures and generates Socratic questions")
     st.divider()
 
     col1, col2 = st.columns([2, 3], gap="large")
@@ -117,23 +93,19 @@ def render() -> None:
         result = st.session_state.get("vision_result")
 
         if result and result.get("ok"):
-            # Record the detected region as an explored topic so image work
-            # shows up on the dashboard (connects this page to the rest).
             region = result.get("region", "")
             if region:
                 topics = st.session_state.setdefault("topics_covered", [])
                 if region not in topics:
                     topics.append(region)
 
-            # ── Structures identified ─────────────────────────────────────
             with st.container(border=True):
                 _section_title("Identified structures")
                 structures = result.get("structures", [])
                 confidence = result.get("confidence", 0.0)
 
                 if structures:
-                    badges = " ".join(_structure_badge(s) for s in structures)
-                    st.markdown(badges, unsafe_allow_html=True)
+                    st.write(", ".join(structures))
                     st.write("")
                     col_r, col_c = st.columns(2)
                     col_r.metric("Region", region.replace("_", " ").title())
@@ -144,33 +116,16 @@ def render() -> None:
                 else:
                     st.warning("No structures identified — try a clearer image.")
 
-            # ── Socratic questions ────────────────────────────────────────
             questions = result.get("questions", [])
             if questions:
                 with st.container(border=True):
                     _section_title("Socratic questions")
                     for i, q in enumerate(questions, 1):
-                        diff_colors = {
-                            "beginner": ("rgba(52,211,153,.14)", "#6EE7B7"),
-                            "intermediate": ("rgba(251,191,36,.14)", "#FBBF24"),
-                            "advanced": ("rgba(244,150,90,.14)", "#F6B07D"),
-                        }
-                        bg, fg = diff_colors.get(
-                            getattr(q, "difficulty", "intermediate"),
-                            ("rgba(148,163,184,.14)", "#CBD5E1"),
-                        )
                         diff_label = getattr(q, "difficulty", "intermediate").title()
                         question_text = getattr(q, "question", str(q))
-
-                        st.markdown(
-                            f"<div style='background:{bg};border-radius:8px;"
-                            f"padding:10px 14px;margin-bottom:8px'>"
-                            f"<div style='font-size:11px;color:{fg};font-weight:600;"
-                            f"margin-bottom:4px'>Q{i} · {diff_label}</div>"
-                            f"<div style='font-size:13px;color:{NAVY}'>{question_text}</div>"
-                            f"</div>",
-                            unsafe_allow_html=True,
-                        )
+                        st.write(f"**Q{i} · {diff_label}**")
+                        st.write(question_text)
+                        st.write("")
 
                     # Send to chat
                     if st.button("💬 Continue in tutor chat", width="stretch"):
@@ -192,7 +147,6 @@ def render() -> None:
                         st.session_state.current_page = "chat"
                         st.rerun()
 
-            # ── Citations ─────────────────────────────────────────────────
             if result.get("citations"):
                 with st.container(border=True):
                     _section_title("Sources")
@@ -204,7 +158,6 @@ def render() -> None:
             st.info("Ensure your OpenAI API key is set and try again.")
 
         else:
-            # No result yet
             with st.container(border=True):
                 _section_title("How it works")
                 st.info(
@@ -213,14 +166,8 @@ def render() -> None:
                     "3 Socratic questions ordered by difficulty.",
                     icon="🔬",
                 )
-                st.markdown(
-                    f"<div style='font-size:13px;color:{MUTED};margin-top:8px'>"
-                    f"Supported: brain · upper extremity · hand · "
-                    f"spinal cord · nervous system</div>",
-                    unsafe_allow_html=True,
-                )
+                st.caption("Supported: brain · upper extremity · hand · spinal cord · nervous system")
 
-    # ── Local image corpus ────────────────────────────────────────────────────
     st.write("")
     meta_path = Path("data/image_metadata.json")
     with st.container(border=True):
@@ -232,7 +179,6 @@ def render() -> None:
         else:
             metadata = json.loads(meta_path.read_text())
             images_dir = Path("data/images")
-            # An image counts as available if its file is actually on disk.
             available = [m for m in metadata if (images_dir / m["filename"]).exists()]
             total_kb = sum(m.get("size_kb", 0) for m in available)
 

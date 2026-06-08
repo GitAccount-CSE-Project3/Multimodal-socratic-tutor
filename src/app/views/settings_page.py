@@ -1,10 +1,4 @@
-"""
-src/app/views/settings_page.py
-
-Settings page — student profile, tutoring preferences, session management,
-and a compact read-only system status. Preferences persist in session state
-and are honoured live by the chat view.
-"""
+# settings_page.py - student profile and preferences
 
 from __future__ import annotations
 
@@ -33,27 +27,18 @@ OT_LEVELS = [
 
 
 def _section_title(text: str) -> None:
-    st.markdown(
-        f"<div style='font-size:14px;font-weight:600;color:{NAVY};margin-bottom:8px'>{text}</div>",
-        unsafe_allow_html=True,
-    )
+    st.subheader(text)
 
 
 def render() -> None:
     settings = get_settings()
 
-    st.markdown(
-        f"<h2 style='font-size:22px;font-weight:600;color:{NAVY};"
-        f"margin-bottom:4px'>Settings</h2>"
-        f"<p style='color:{MUTED};margin-bottom:0'>"
-        f"Personalise your tutoring experience</p>",
-        unsafe_allow_html=True,
-    )
+    st.header("Settings")
+    st.caption("Personalise your tutoring experience")
     st.divider()
 
     col_left, col_right = st.columns(2, gap="large")
 
-    # ── Profile ─────────────────────────────────────────────────────────────────
     with col_left:
         with st.container(border=True):
             _section_title("👤  Profile")
@@ -77,7 +62,6 @@ def render() -> None:
                     st.session_state.student_id = f"student_{slug}" or st.session_state.student_id
                 st.toast("Profile saved", icon="✅")
 
-    # ── Tutoring preferences ─────────────────────────────────────────────────────
     with col_right:
         with st.container(border=True):
             _section_title("🎛  Tutoring preferences")
@@ -99,7 +83,6 @@ def render() -> None:
                 f"(configured in `.env`)."
             )
 
-    # ── Accessibility ────────────────────────────────────────────────────────────
     with col_left:
         with st.container(border=True):
             _section_title("♿  Accessibility")
@@ -121,7 +104,6 @@ def render() -> None:
             ):
                 st.warning("Audio features require OPENAI_API_KEY in .env.", icon="⚠️")
 
-    # ── Session management ───────────────────────────────────────────────────────
     with col_right:
         with st.container(border=True):
             _section_title("🗂  Session")
@@ -170,7 +152,6 @@ def render() -> None:
                 except Exception as e:
                     st.error(f"Could not clear history: {e}")
 
-    # ── System status (read-only, collapsed) ─────────────────────────────────────
     st.write("")
     with st.expander("System status", expanded=False):
         sc1, sc2 = st.columns(2)

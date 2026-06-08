@@ -1,9 +1,4 @@
-"""
-src/app/views/dashboard.py
-
-Student performance dashboard.
-Cross-session memory panel, assessment scores, mastery trends.
-"""
+# dashboard.py - student progress dashboard
 
 from __future__ import annotations
 
@@ -30,35 +25,17 @@ def _score_palette(score: float) -> tuple[str, str, str]:
 
 
 def _section_title(text: str) -> None:
-    st.markdown(
-        f"<div style='font-size:14px;font-weight:600;color:{NAVY};margin-bottom:10px'>{text}</div>",
-        unsafe_allow_html=True,
-    )
+    st.subheader(text, divider=False)
 
 
 def _mastery_bar(topic: str, score: float) -> None:
-    color, bg, tc = _score_palette(score)
     c1, c2, c3 = st.columns([3, 5, 1])
     with c1:
-        st.markdown(
-            f"<div style='font-size:13px;color:{NAVY};padding-top:4px'>"
-            f"{topic.replace('_', ' ').title()}</div>",
-            unsafe_allow_html=True,
-        )
+        st.write(topic.replace("_", " ").title())
     with c2:
-        st.markdown(
-            f"<div style='margin-top:6px;height:8px;background:{GRID};"
-            f"border-radius:4px;overflow:hidden'>"
-            f"<div style='width:{int(score)}%;height:100%;"
-            f"background:{color};border-radius:4px'></div></div>",
-            unsafe_allow_html=True,
-        )
+        st.progress(int(score) / 100)
     with c3:
-        st.markdown(
-            f"<span style='background:{bg};color:{tc};padding:2px 8px;"
-            f"border-radius:10px;font-size:12px;font-weight:600'>{int(score)}%</span>",
-            unsafe_allow_html=True,
-        )
+        st.write(f"{int(score)}%")
 
 
 def _radar_chart(scores: dict[str, float]) -> None:
@@ -125,17 +102,10 @@ def render() -> None:
     weak_topics = [t for t, s in scores.items() if s < 60]
     strong_count = sum(1 for s in scores.values() if s >= 80)
 
-    # ── Header ────────────────────────────────────────────────────────────────
-    st.markdown(
-        f"<h2 style='font-size:22px;font-weight:600;color:{NAVY};margin-bottom:4px'>"
-        f"Student Dashboard</h2>"
-        f"<p style='color:{MUTED};margin-bottom:0'>"
-        f"Performance overview · {name or 'Guest'}</p>",
-        unsafe_allow_html=True,
-    )
+    st.header("Student Dashboard")
+    st.caption(f"Performance overview · {name or 'Guest'}")
     st.divider()
 
-    # ── KPI cards ─────────────────────────────────────────────────────────────
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Overall mastery", f"{int(avg_score)}%" if has_data else "—")
@@ -153,7 +123,6 @@ def render() -> None:
 
     st.write("")
 
-    # ── Mastery + side panel ──────────────────────────────────────────────────
     col_left, col_right = st.columns([3, 2], gap="large")
 
     with col_left:
@@ -166,15 +135,9 @@ def render() -> None:
                     icon="📊",
                 )
             else:
-                # A radar chart only reads well with 4+ axes; with 1-3 topics it
-                # degenerates into a line/triangle, so we show the bars alone.
                 if len(scores) >= 4:
                     _radar_chart(scores)
-                st.markdown(
-                    f"<div style='font-size:12px;color:{MUTED};margin:4px 0 10px'>"
-                    f"{strong_count} strong (≥80%) · {len(weak_topics)} need work</div>",
-                    unsafe_allow_html=True,
-                )
+                st.caption(f"{strong_count} strong (≥80%) · {len(weak_topics)} need work")
                 for topic, score in sorted(scores.items(), key=lambda x: -x[1]):
                     _mastery_bar(topic, score)
 
@@ -187,14 +150,7 @@ def render() -> None:
                 st.success("No weak areas — great work!")
             else:
                 for topic in weak_topics:
-                    st.markdown(
-                        f"<div style='background:rgba(248,113,113,.12);color:#FCA5A5;"
-                        f"border:1px solid rgba(248,113,113,.22);"
-                        f"padding:8px 12px;border-radius:10px;font-size:13px;"
-                        f"font-weight:500;margin-bottom:6px'>"
-                        f"⚠ {topic.replace('_', ' ').title()}</div>",
-                        unsafe_allow_html=True,
-                    )
+                    st.warning(topic.replace("_", " ").title(), icon="⚠️")
 
         with st.container(border=True):
             _section_title("Memory summary")
@@ -219,7 +175,6 @@ def render() -> None:
 
     st.write("")
 
-    # ── Topics table ──────────────────────────────────────────────────────────
     with st.container(border=True):
         _section_title("All topics")
         if not scores:
@@ -248,7 +203,6 @@ def render() -> None:
 
     st.write("")
 
-    # ── Quick actions ─────────────────────────────────────────────────────────
     _section_title("Quick actions")
     ca, cb, cc = st.columns(3)
     with ca:
