@@ -1,19 +1,3 @@
-"""
-src/utils/logger.py
-
-Centralised logging setup using loguru.
-Import `logger` from here everywhere — never use stdlib logging directly.
-
-Log files rotate at 10 MB and are retained for 14 days, then compressed to zip.
-Development mode uses coloured stderr output; production uses plain text.
-
-Usage:
-    from src.utils.logger import logger
-    logger.info("RAG pipeline started")
-    logger.debug("Retrieved {count} chunks", count=5)
-    logger.error("LLM call failed: {error}", error=str(e))
-"""
-
 from __future__ import annotations
 
 import sys

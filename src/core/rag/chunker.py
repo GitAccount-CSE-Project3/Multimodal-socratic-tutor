@@ -1,14 +1,3 @@
-"""
-src/core/rag/chunker.py
-
-Chunker — splits raw text into overlapping chunks with metadata.
-Single responsibility: text in → DocumentChunk list out.
-
-Uses LangChain RecursiveCharacterTextSplitter internally
-but wraps it behind a clean interface so the rest of the
-codebase never imports LangChain directly.
-"""
-
 from __future__ import annotations
 
 from uuid import uuid4

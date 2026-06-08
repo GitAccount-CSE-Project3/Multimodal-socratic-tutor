@@ -1,9 +1,3 @@
-"""
-src/schemas/rag.py
-
-Pydantic v2 schemas for RAG pipeline — chunks, retrieval results, citations.
-"""
-
 from __future__ import annotations
 
 from typing import Any

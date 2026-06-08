@@ -1,13 +1,3 @@
-"""
-src/core/conversation/evaluator.py
-
-StudentResponseEvaluator — classifies student answers and generates feedback.
-Single responsibility: given (student_response, reference, context),
-return an EvaluationResult with quality classification and feedback.
-
-Uses LLM-as-judge approach: structured JSON output from gpt-4o-mini.
-"""
-
 from __future__ import annotations
 
 import asyncio

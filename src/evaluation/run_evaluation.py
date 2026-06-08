@@ -1,17 +1,3 @@
-"""
-evaluation/run_evaluation.py
-
-Master evaluation runner — runs all Phase 5 evaluations and
-produces a unified report for the ACL paper.
-
-Usage:
-    python evaluation/run_evaluation.py              # full suite
-    python evaluation/run_evaluation.py --compliance # compliance only
-    python evaluation/run_evaluation.py --ragas      # RAGAS only
-    python evaluation/run_evaluation.py --baseline   # baseline only
-    python evaluation/run_evaluation.py --quick      # 5 samples (fast)
-"""
-
 from __future__ import annotations
 
 import argparse

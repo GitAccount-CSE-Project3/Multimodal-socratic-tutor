@@ -1,15 +1,3 @@
-"""
-src/prompts/loader.py
-
-Loads all prompt templates from config/prompts.yaml.
-Provides type-safe access and string formatting for templates.
-
-Usage:
-    from src.prompts.loader import get_prompt
-    prompt = get_prompt("socratic.hint_level_1", topic="cerebellum",
-                        guiding_question="What role does balance play?")
-"""
-
 from __future__ import annotations
 
 __all__ = ["get_prompt", "list_prompt_keys"]

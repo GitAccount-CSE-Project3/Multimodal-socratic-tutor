@@ -1,16 +1,3 @@
-"""
-evaluation/ragas_evaluator.py
-
-RagasEvaluator — runs RAGAS metrics on the ground truth dataset.
-
-Metrics computed:
-  faithfulness      — does answer stay grounded in retrieved context?
-  answer_relevance  — does answer address the question?
-  context_recall    — did retrieval find the right chunks?
-
-Run: python evaluation/ragas_evaluator.py
-"""
-
 from __future__ import annotations
 
 import asyncio

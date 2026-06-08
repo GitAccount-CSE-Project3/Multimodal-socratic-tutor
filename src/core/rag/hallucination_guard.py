@@ -1,13 +1,3 @@
-"""
-src/core/rag/hallucination_guard.py
-
-HallucinationGuard — verifies LLM answer stays grounded in retrieved context.
-Single responsibility: (answer, context) in → GuardResult out.
-
-Uses simple keyword overlap + LLM-based verification.
-Flags answers that introduce facts not present in retrieved context.
-"""
-
 from __future__ import annotations
 
 import re

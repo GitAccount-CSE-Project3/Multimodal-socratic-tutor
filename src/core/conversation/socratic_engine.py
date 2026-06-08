@@ -1,16 +1,3 @@
-"""
-src/core/conversation/socratic_engine.py
-
-SocraticEngine — the core tutor-not-teller logic.
-Updated in Phase 4 to support image input via MultimodalPipeline.
-
-Pipeline (text):
-  student_input → bypass check → RAG → KnowledgeMasker → LLM → SocraticResponse
-
-Pipeline (image):
-  image_bytes → VisionAnalyzer → ImageQuestionGenerator → RAG → SocraticResponse
-"""
-
 from __future__ import annotations
 
 import asyncio

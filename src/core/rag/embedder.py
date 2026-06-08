@@ -1,13 +1,3 @@
-"""
-src/core/rag/embedder.py
-
-Embedder — converts text chunks into embedding vectors.
-Single responsibility: text list in → vector list out.
-
-Wraps the EmbeddingModel singleton from models layer.
-Handles batching to avoid OOM on large corpora.
-"""
-
 from __future__ import annotations
 
 from src.models.embedding_model import get_embedding_model

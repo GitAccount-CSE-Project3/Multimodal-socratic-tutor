@@ -1,14 +1,3 @@
-"""
-src/models/embedding_model.py
-
-Multi-provider embedding model wrapper.
-Supports:
-  openai              → text-embedding-3-small (recommended)
-  sentence-transformers → all-MiniLM-L6-v2 (local fallback)
-
-All encode() calls are async — run in thread pool to avoid blocking.
-"""
-
 from __future__ import annotations
 
 import asyncio

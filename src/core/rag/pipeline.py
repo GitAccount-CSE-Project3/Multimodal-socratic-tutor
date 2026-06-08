@@ -1,13 +1,3 @@
-"""
-src/core/rag/pipeline.py
-
-RAGPipeline — top-level orchestrator for retrieval-augmented generation.
-Single responsibility: query in → grounded LLM answer out.
-
-Pipeline:
-    query → Retriever → context assembly → LLM prompt → HallucinationGuard → answer
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

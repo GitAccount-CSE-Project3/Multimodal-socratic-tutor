@@ -1,14 +1,3 @@
-"""
-src/models/llm_factory.py
-
-OpenAI LLM factory.
-Returns the correct LangChain ChatOpenAI instance for text and vision.
-
-Models (from settings):
-  openai_llm_model     → gpt-4o-mini  (text tutoring)
-  openai_vision_model  → gpt-4o       (image analysis)
-"""
-
 from __future__ import annotations
 
 __all__ = ["LLMFactory", "get_llm", "get_vision_llm"]
@@ -71,9 +60,6 @@ class LLMFactory:
         settings = get_settings()
         logger.info("Vision LLM: OpenAI {m}", m=settings.openai_vision_model)
         return cls._build_openai(settings.openai_vision_model, **kwargs)
-
-
-# ── Cached singletons ─────────────────────────────────────────────────────────
 
 
 @lru_cache(maxsize=1)

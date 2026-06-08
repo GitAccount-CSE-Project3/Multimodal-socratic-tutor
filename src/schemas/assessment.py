@@ -1,10 +1,3 @@
-"""
-src/schemas/assessment.py
-
-Pydantic v2 schemas for assessment engine.
-Updated Phase 4: added PerformanceSummary fields.
-"""
-
 from __future__ import annotations
 
 from enum import Enum

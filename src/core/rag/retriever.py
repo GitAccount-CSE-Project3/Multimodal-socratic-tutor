@@ -1,10 +1,3 @@
-"""
-src/core/rag/retriever.py
-
-Retriever — semantic search + context assembly + citation tracking.
-Single responsibility: query string in → RetrievalResult out.
-"""
-
 from __future__ import annotations
 
 from src.config.settings import get_settings

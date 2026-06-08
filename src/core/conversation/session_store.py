@@ -1,12 +1,3 @@
-"""
-src/core/conversation/session_store.py
-
-Async SQLite session store using aiosqlite + SQLAlchemy core.
-Single responsibility: persist and retrieve SessionState objects.
-
-All DB operations are async — never block the event loop.
-"""
-
 from __future__ import annotations
 
 import json

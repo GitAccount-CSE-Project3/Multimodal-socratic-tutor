@@ -1,10 +1,3 @@
-"""
-src/core/conversation/manager.py
-
-ConversationManager — orchestrates all four session phases.
-Updated in Phase 4 to wire in MemoryManager and MasteryTracker.
-"""
-
 from __future__ import annotations
 
 from src.config.settings import get_settings

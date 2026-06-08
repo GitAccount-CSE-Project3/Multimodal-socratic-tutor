@@ -1,13 +1,3 @@
-"""
-src/core/audio/audio_service.py
-
-AudioService — text-to-speech and speech-to-text for the accessibility layer.
-
-Primary provider: OpenAI (gpt-4o-mini-tts / gpt-4o-mini-transcribe — the cheap
-tier). Kept behind a small service class so a local/open-source backend
-(pyttsx3, faster-whisper) can be dropped in later without touching the UI.
-"""
-
 from __future__ import annotations
 
 import io

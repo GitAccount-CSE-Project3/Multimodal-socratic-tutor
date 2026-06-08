@@ -1,20 +1,3 @@
-"""
-src/core/memory/student_memory.py
-
-StudentMemory — persists per-student knowledge across sessions.
-Single responsibility: read/write student memory to SQLite.
-
-Schema (student_memory table):
-    student_id   TEXT PRIMARY KEY
-    weak_topics  TEXT  (JSON list)
-    strong_topics TEXT (JSON list)
-    mastery_scores TEXT (JSON dict topic→score)
-    total_sessions INTEGER
-    total_turns    INTEGER
-    last_seen      TEXT (ISO datetime)
-    notes          TEXT (free-form observations)
-"""
-
 from __future__ import annotations
 
 import json

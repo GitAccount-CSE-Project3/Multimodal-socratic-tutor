@@ -1,14 +1,3 @@
-"""
-src/core/rag/vector_store.py
-
-VectorStore — abstract base + ChromaDB and FAISS implementations.
-Single responsibility: store and retrieve embedding vectors.
-
-Factory function get_vector_store() returns correct implementation
-based on VECTOR_STORE_TYPE in settings. No caller needs to know
-which backend is used.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -22,8 +11,6 @@ from src.core.rag.embedder import Embedder
 from src.schemas.rag import DocumentChunk, RetrievedChunk
 from src.utils.exceptions import CorpusEmptyError, VectorStoreError
 from src.utils.logger import logger
-
-# ── Abstract base ─────────────────────────────────────────────────────────────
 
 
 class VectorStore(ABC):
@@ -53,9 +40,6 @@ class VectorStore(ABC):
     async def reset(self) -> None:
         """Clear all stored chunks."""
         ...
-
-
-# ── ChromaDB implementation ───────────────────────────────────────────────────
 
 
 def _make_noop_embedding_function() -> object:
@@ -252,9 +236,6 @@ class ChromaVectorStore(VectorStore):
         logger.warning("ChromaDB collection reset — all chunks deleted")
 
 
-# ── FAISS implementation ──────────────────────────────────────────────────────
-
-
 class FAISSVectorStore(VectorStore):
     """
     FAISS-backed vector store for benchmark comparison.
@@ -371,9 +352,6 @@ class FAISSVectorStore(VectorStore):
         if self._index_path.exists():
             self._index_path.unlink()
         logger.warning("FAISS index reset")
-
-
-# ── Factory ───────────────────────────────────────────────────────────────────
 
 
 @lru_cache(maxsize=1)

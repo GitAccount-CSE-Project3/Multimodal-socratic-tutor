@@ -1,10 +1,3 @@
-"""
-src/core/conversation/state.py
-
-Conversation state definitions for socratOT.
-Single responsibility: define all state types and turn tracking logic.
-"""
-
 from __future__ import annotations
 
 from enum import Enum

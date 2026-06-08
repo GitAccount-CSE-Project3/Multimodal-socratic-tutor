@@ -1,16 +1,3 @@
-"""
-src/core/assessment/reasoning_evaluator.py
-
-ReasoningEvaluator — scores student clinical reasoning 0–100.
-Single responsibility: (student_response, scenario) → ReasoningScore.
-
-Scoring rubric:
-  Clinical accuracy  0–40  (correct anatomy + pathology)
-  Reasoning quality  0–40  (logical argument, OT context)
-  Terminology        0–20  (correct anatomical terms used)
-  Total              0–100
-"""
-
 from __future__ import annotations
 
 import asyncio

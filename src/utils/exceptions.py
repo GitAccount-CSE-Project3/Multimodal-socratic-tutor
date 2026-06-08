@@ -1,14 +1,3 @@
-"""
-src/utils/exceptions.py
-
-All custom exceptions for socratOT.
-Raise specific exceptions internally — only catch at the app/UI boundary.
-
-Usage:
-    from src.utils.exceptions import LLMUnavailableError
-    raise LLMUnavailableError("OpenAI API key not set")
-"""
-
 from __future__ import annotations
 
 __all__ = [
@@ -33,8 +22,6 @@ __all__ = [
     "VectorStoreError",
 ]
 
-# ── Base ──────────────────────────────────────────────────────────────────────
-
 
 class SocratOTError(Exception):
     """Base exception for all socratOT errors."""
@@ -48,9 +35,6 @@ class SocratOTError(Exception):
         if self.detail:
             return f"{self.message} — {self.detail}"
         return self.message
-
-
-# ── LLM / Model ───────────────────────────────────────────────────────────────
 
 
 class LLMUnavailableError(SocratOTError):
@@ -69,9 +53,6 @@ class ModelNotFoundError(SocratOTError):
     """Raised when a requested model is not available from the provider."""
 
 
-# ── RAG ───────────────────────────────────────────────────────────────────────
-
-
 class VectorStoreError(SocratOTError):
     """Raised when ChromaDB or FAISS operations fail."""
 
@@ -88,9 +69,6 @@ class RetrievalError(SocratOTError):
     """Raised when semantic retrieval fails."""
 
 
-# ── Multimodal ────────────────────────────────────────────────────────────────
-
-
 class ImageProcessingError(SocratOTError):
     """Raised when image upload or pre-processing fails."""
 
@@ -101,9 +79,6 @@ class ImageAnalysisError(SocratOTError):
 
 class UnsupportedImageFormatError(SocratOTError):
     """Raised when uploaded file is not a supported image format."""
-
-
-# ── Conversation ──────────────────────────────────────────────────────────────
 
 
 class SessionNotFoundError(SocratOTError):
@@ -118,18 +93,12 @@ class InvalidPhaseTransitionError(SocratOTError):
     """Raised when trying to transition to an invalid conversation phase."""
 
 
-# ── Audio ─────────────────────────────────────────────────────────────────────
-
-
 class AudioTranscriptionError(SocratOTError):
     """Raised when Whisper STT transcription fails."""
 
 
 class AudioSynthesisError(SocratOTError):
     """Raised when OpenAI TTS synthesis fails."""
-
-
-# ── Persistence ───────────────────────────────────────────────────────────────
 
 
 class DatabaseError(SocratOTError):

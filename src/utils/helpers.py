@@ -1,10 +1,3 @@
-"""
-src/utils/helpers.py
-
-Shared pure utility functions — no business logic, no external dependencies.
-All functions are stateless and independently testable.
-"""
-
 from __future__ import annotations
 
 __all__ = [

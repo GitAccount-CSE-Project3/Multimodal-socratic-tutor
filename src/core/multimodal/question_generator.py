@@ -1,10 +1,3 @@
-"""
-src/core/multimodal/question_generator.py
-
-ImageQuestionGenerator — generates Socratic questions from identified structures.
-Single responsibility: VisionResult in → list of Socratic questions out.
-"""
-
 from __future__ import annotations
 
 import asyncio

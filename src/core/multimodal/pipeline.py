@@ -1,17 +1,3 @@
-"""
-src/core/multimodal/pipeline.py
-
-MultimodalPipeline — orchestrates the full image → Socratic response flow.
-Single responsibility: image bytes in → SocraticResponse out.
-
-Pipeline:
-  image bytes
-    → VisionAnalyzer (GPT-4o)
-    → ImageQuestionGenerator
-    → RAG context retrieval for identified structures
-    → SocraticResponse
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -1,10 +1,3 @@
-"""
-src/schemas/base.py
-
-Shared base Pydantic v2 models used across all modules.
-Import these instead of redefining common structures.
-"""
-
 from __future__ import annotations
 
 __all__ = ["BaseSchema", "TimestampedSchema", "IdentifiedSchema"]

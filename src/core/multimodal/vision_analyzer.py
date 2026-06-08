@@ -1,10 +1,3 @@
-"""
-src/core/multimodal/vision_analyzer.py
-
-VisionAnalyzer — sends anatomy images to GPT-4o vision.
-Single responsibility: image in → identified structures + confidence out.
-"""
-
 from __future__ import annotations
 
 import asyncio

@@ -1,15 +1,3 @@
-"""
-evaluation/baseline_evaluator.py
-
-BaselineEvaluator — compares socratOT vs baselines for ACL paper.
-
-Baselines:
-  1. No-RAG:      plain LLM answer with no retrieved context
-  2. No-Socratic: RAG answer but no hint/masking logic (direct answer)
-
-Metrics: ROUGE-L, BERTScore F1, keyword overlap
-"""
-
 from __future__ import annotations
 
 import asyncio

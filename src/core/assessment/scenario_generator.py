@@ -1,10 +1,3 @@
-"""
-src/core/assessment/scenario_generator.py
-
-ClinicalScenarioGenerator — creates OT clinical scenarios from RAG corpus.
-Single responsibility: topic → ClinicalScenario with OT context.
-"""
-
 from __future__ import annotations
 
 import asyncio

@@ -1,13 +1,3 @@
-"""
-src/core/memory/memory_manager.py
-
-MemoryManager — loads memory at session start, saves at session end.
-Single responsibility: bridge between StudentMemory and ConversationManager.
-
-Key feature: PersonalisedOpener — generates session opening that
-references past weak areas so students feel the system knows them.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

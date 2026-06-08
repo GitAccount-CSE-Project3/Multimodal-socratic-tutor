@@ -1,10 +1,3 @@
-"""
-src/schemas/conversation.py
-
-Pydantic v2 schemas for conversation state, messages, and session data.
-Used by ConversationManager, SessionStore, and the Streamlit UI.
-"""
-
 from __future__ import annotations
 
 __all__ = [
@@ -22,8 +15,6 @@ from enum import Enum
 from pydantic import Field
 
 from src.schemas.base import BaseSchema, IdentifiedSchema
-
-# ── Enums ─────────────────────────────────────────────────────────────────────
 
 
 class ConversationPhase(str, Enum):
@@ -46,9 +37,6 @@ class ResponseQuality(str, Enum):
     PARTIAL = "partial"
     INCORRECT = "incorrect"
     UNCLEAR = "unclear"
-
-
-# ── Message schemas ───────────────────────────────────────────────────────────
 
 
 class Message(BaseSchema):
@@ -81,9 +69,6 @@ class ConversationHistory(BaseSchema):
             if m.role == MessageRole.USER:
                 return m
         return None
-
-
-# ── Session schemas ───────────────────────────────────────────────────────────
 
 
 class StudentProfile(BaseSchema):

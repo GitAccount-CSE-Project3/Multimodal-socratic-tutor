@@ -1,10 +1,3 @@
-"""
-src/core/assessment/mastery_tracker.py
-
-MasteryTracker — tracks and updates per-topic mastery scores.
-Single responsibility: aggregate scores across turns → PerformanceSummary.
-"""
-
 from __future__ import annotations
 
 from src.core.assessment.reasoning_evaluator import ReasoningEvaluator
