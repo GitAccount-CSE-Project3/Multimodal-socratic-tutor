@@ -20,6 +20,8 @@ from src.config.settings import get_settings
 from src.utils.exceptions import LLMUnavailableError
 from src.utils.logger import logger
 
+_DEFAULT_TEMPERATURE: float = 0.7
+
 
 class LLMFactory:
     """
@@ -43,7 +45,7 @@ class LLMFactory:
             return ChatOpenAI(
                 model=model_name,
                 api_key=settings.openai_api_key,
-                temperature=0.7,
+                temperature=_DEFAULT_TEMPERATURE,
                 **kwargs,
             )
         except ImportError as e:
