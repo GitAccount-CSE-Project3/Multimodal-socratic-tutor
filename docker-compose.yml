@@ -1,15 +1,4 @@
-# ─────────────────────────────────────────────────────────────
-#  socratOT — docker-compose.yml
-#  Single service: app (Streamlit). LLM + vision + embeddings
-#  are served by the OpenAI API, so no local model server is needed.
-#  Usage:
-#    docker compose up --build      # build and start
-#    docker compose down            # stop
-# ─────────────────────────────────────────────────────────────
-
 services:
-
-  # ── socratOT Streamlit app ──────────────────
   app:
     build:
       context: .
@@ -24,7 +13,6 @@ services:
     environment:
       - DATABASE_URL=sqlite+aiosqlite:///./data/socratot.db
     volumes:
-      # Persist data outside container
       - ./data:/app/data
       - ./logs:/app/logs
       - ./evaluation:/app/evaluation
