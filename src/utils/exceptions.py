@@ -11,6 +11,28 @@ Usage:
 
 from __future__ import annotations
 
+__all__ = [
+    "AudioSynthesisError",
+    "AudioTranscriptionError",
+    "ConfigurationError",
+    "CorpusEmptyError",
+    "DatabaseError",
+    "EmbeddingError",
+    "ImageAnalysisError",
+    "ImageProcessingError",
+    "InvalidPhaseTransitionError",
+    "LLMResponseParseError",
+    "LLMTimeoutError",
+    "LLMUnavailableError",
+    "ModelNotFoundError",
+    "RetrievalError",
+    "SessionExpiredError",
+    "SessionNotFoundError",
+    "SocratOTError",
+    "UnsupportedImageFormatError",
+    "VectorStoreError",
+]
+
 # ── Base ──────────────────────────────────────────────────────────────────────
 
 
