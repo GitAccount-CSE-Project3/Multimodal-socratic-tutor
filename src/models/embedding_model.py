@@ -18,6 +18,9 @@ from src.config.settings import EmbeddingProvider, get_settings
 from src.utils.exceptions import EmbeddingError
 from src.utils.logger import logger
 
+_OPENAI_EMBEDDING_DIM: int = 1536   # text-embedding-3-small
+_ST_EMBEDDING_DIM: int = 384        # all-MiniLM-L6-v2
+
 
 class EmbeddingModel:
     """
@@ -60,7 +63,7 @@ class EmbeddingModel:
                 )
             self._client = OpenAI(api_key=settings.openai_api_key)
             self._model_name = settings.openai_embedding_model
-            self._dim = 1536  # text-embedding-3-small default
+            self._dim = _OPENAI_EMBEDDING_DIM
             logger.info("Embedding: OpenAI {m}", m=self._model_name)
         except ImportError as e:
             raise EmbeddingError(
@@ -76,7 +79,7 @@ class EmbeddingModel:
             device = self._resolve_device(settings.embedding_device)
             self._model_name = settings.embedding_model
             self._model = SentenceTransformer(self._model_name, device=device)
-            self._dim = 384
+            self._dim = _ST_EMBEDDING_DIM
             logger.info(
                 "Embedding: SentenceTransformer {m} on {d}",
                 m=self._model_name,
