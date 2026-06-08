@@ -127,4 +127,3 @@ pre-commit install
 ## License
 
 MIT
-# Multimodal-socratic-tutor
