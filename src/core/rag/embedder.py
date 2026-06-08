@@ -97,4 +97,4 @@ class Embedder:
     def embedding_dim(self) -> int:
         """Return embedding dimension (loads model if needed)."""
         self._model._load()
-        return 384  # all-MiniLM-L6-v2 default
+        return 384

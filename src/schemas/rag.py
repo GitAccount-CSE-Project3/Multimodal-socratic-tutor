@@ -11,7 +11,7 @@ class DocumentChunk(IdentifiedSchema):
     """A single text chunk from the corpus after splitting."""
 
     content: str = Field(min_length=1)
-    source: str  # e.g. "openStax/chapter_14.pdf"
+    source: str
     page: int | None = None
     chapter: str | None = None
     topic_tags: list[str] = Field(default_factory=list)
@@ -53,5 +53,5 @@ class ImageMetadata(BaseSchema):
     license: str
     structures: list[str] = Field(default_factory=list)
     region: str
-    difficulty: str = "intermediate"  # beginner | intermediate | advanced
+    difficulty: str = "intermediate"
     ot_relevance: str | None = None

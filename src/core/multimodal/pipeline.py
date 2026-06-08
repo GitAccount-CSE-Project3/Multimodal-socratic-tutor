@@ -17,7 +17,7 @@ class MultimodalResponse:
     vision_result: VisionResult
     questions: list[ImageQuestion]
     rag_context: str
-    socratic_reply: str  # the tutor's opening message
+    socratic_reply: str
     citations: list[str]
 
 
@@ -68,7 +68,6 @@ class MultimodalPipeline:
         """
         logger.info("Multimodal pipeline: analyzing image ({n} bytes)", n=len(image_bytes))
 
-        # Step 1: Vision analysis
         vision_result = await self._vision.analyze_bytes(image_bytes, media_type)
 
         if vision_result.error:
@@ -82,10 +81,8 @@ class MultimodalPipeline:
             c=vision_result.confidence,
         )
 
-        # Step 2: Generate Socratic questions
         questions = await self._questions.generate(vision_result, n_questions=3)
 
-        # Step 3: RAG context for identified structures
         rag_context = ""
         citations = []
         if vision_result.structures:
@@ -97,8 +94,6 @@ class MultimodalPipeline:
             except Exception as e:
                 logger.warning("RAG retrieval failed for image query: {e}", e=str(e))
 
-        # Step 4: Build Socratic opener. If the student asked a question about the
-        # image, answer it guidingly (LLM); otherwise use the templated opener.
         if user_question and user_question.strip():
             socratic_reply = await self._build_opener_with_question(
                 vision_result, questions, rag_context, user_question.strip()
@@ -176,7 +171,6 @@ class MultimodalPipeline:
         except Exception as e:
             logger.warning("Image-question opener LLM failed, using template: {e}", e=str(e))
 
-        # Fallback: templated opener + acknowledge the question
         base = self._build_opener(vision, questions)
         return f"You asked: *{user_question}*\n\n{base}"
 

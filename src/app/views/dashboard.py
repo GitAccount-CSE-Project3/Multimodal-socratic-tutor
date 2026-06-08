@@ -1,4 +1,3 @@
-# dashboard.py - student progress dashboard
 
 from __future__ import annotations
 
@@ -93,9 +92,8 @@ def render() -> None:
     turns = st.session_state.get("turn_count", 0)
     phase = st.session_state.get("phase", "rapport")
 
-    # Merge session scores with long-term memory
     memory_scores = _load_memory_scores(student_id)
-    scores = {**memory_scores, **session_scores}  # session overrides memory
+    scores = {**memory_scores, **session_scores}
 
     has_data = bool(scores)
     avg_score = sum(scores.values()) / len(scores) if scores else 0

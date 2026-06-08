@@ -6,7 +6,6 @@ from src.schemas.assessment import ClinicalScenario
 from src.utils.helpers import safe_parse_json, truncate_text
 from src.utils.logger import logger
 
-# OT-specific scenario templates per topic
 SCENARIO_TEMPLATES = {
     "cerebellum": (
         "A 45-year-old patient presents to OT following a posterior fossa "
@@ -88,7 +87,6 @@ class ClinicalScenarioGenerator:
         Returns:
             ClinicalScenario with scenario_text, question, and reference_answer
         """
-        # Get RAG context for this topic
         context = ""
         try:
             rag_result = await self._get_rag().query(
@@ -137,7 +135,6 @@ Generate a clinical scenario and respond ONLY with valid JSON:
         except Exception as e:
             logger.error("Scenario generation failed: {e}", e=str(e))
 
-        # Fallback
         return self._fallback_scenario(topic, template, difficulty)
 
     def _fallback_scenario(

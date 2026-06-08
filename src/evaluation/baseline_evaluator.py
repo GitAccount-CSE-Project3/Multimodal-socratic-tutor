@@ -53,8 +53,6 @@ class BaselineEvaluator:
             for line in f:
                 if line.strip():
                     samples.append(json.loads(line.strip()))
-        # Only anatomy questions: clinical_application (OT) questions ask for
-        # knowledge outside the corpus, so answer-overlap metrics don't apply.
         samples = [s for s in samples if s.get("category", "anatomy") == "anatomy"]
         return samples[: self._n_samples]
 

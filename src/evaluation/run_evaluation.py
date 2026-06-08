@@ -21,7 +21,6 @@ async def run_all(quick: bool = False) -> dict:
     print(f"  Mode: {'quick (5 samples)' if quick else 'full (20 samples)'}")
     print("=" * 60)
 
-    # ── 1. Socratic compliance ─────────────────────────────────────
     print("\n[ 1/3 ] Socratic compliance evaluation")
     from evaluation.compliance_evaluator import SocraticComplianceEvaluator
 
@@ -31,7 +30,6 @@ async def run_all(quick: bool = False) -> dict:
     print(f"  Bypass detection:  {c_res.bypass_detection_rate:.1%}")
     print(f"  Socratic compliance: {c_res.socratic_compliance_rate:.1%}")
 
-    # ── 2. RAGAS evaluation ────────────────────────────────────────
     print("\n[ 2/3 ] RAGAS evaluation")
     from evaluation.ragas_evaluator import RagasEvaluator
 
@@ -43,7 +41,6 @@ async def run_all(quick: bool = False) -> dict:
     print(f"  Context recall:   {r_res.context_recall:.3f}")
     print(f"  Average:          {r_res.average:.3f}")
 
-    # ── 3. Baseline comparison ────────────────────────────────────
     print("\n[ 3/3 ] Baseline comparison")
     from evaluation.baseline_evaluator import BaselineEvaluator
 
@@ -53,7 +50,6 @@ async def run_all(quick: bool = False) -> dict:
     for r in b_res:
         print(f"  {r.system_name:<15} ROUGE-L={r.rouge_l:.3f}")
 
-    # ── Save combined results ─────────────────────────────────────
     results["metadata"] = {
         "timestamp": datetime.utcnow().isoformat(),
         "n_samples": n_samples,
@@ -64,7 +60,6 @@ async def run_all(quick: bool = False) -> dict:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2))
 
-    # ── Generate markdown report ──────────────────────────────────
     _write_report(results)
 
     print("\n" + "=" * 60)
@@ -87,7 +82,6 @@ def _write_report(results: dict) -> None:
     no_rag = next((b for b in bases if b["system"] == "no_rag"), {})
     no_soc = next((b for b in bases if b["system"] == "no_socratic"), {})
 
-    # ── Derive the benchmark narrative from the actual numbers ──────────────
     faith = ragas.get("faithfulness", 0)
     compliance = comp.get("socratic_compliance", 0)
     soc_rouge = socratot.get("rouge_l", 0)

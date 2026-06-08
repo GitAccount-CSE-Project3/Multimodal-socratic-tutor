@@ -85,9 +85,6 @@ class ChromaVectorStore(VectorStore):
             return self._collection
 
         try:
-            # Silence ChromaDB's PostHog telemetry. Even with
-            # anonymized_telemetry=False it logs a harmless "Failed to send
-            # telemetry event" (posthog version mismatch) — suppress at the source.
             import logging
             import os
 
@@ -132,10 +129,8 @@ class ChromaVectorStore(VectorStore):
 
         collection = self._get_collection()
 
-        # Embed all chunks
         embeddings = await self._embedder.embed_chunks(chunks)
 
-        # Prepare ChromaDB inputs
         ids = [str(chunk.id) for chunk in chunks]
         documents = [chunk.content for chunk in chunks]
         metadatas = [
@@ -195,8 +190,6 @@ class ChromaVectorStore(VectorStore):
         ids = results.get("ids", [[]])[0]
 
         for _doc_id, doc, meta, dist in zip(ids, documents, metadatas, distances):
-            # ChromaDB cosine distance: 0=identical, 2=opposite
-            # Convert to similarity score 0-1
             score = max(0.0, 1.0 - (dist / 2.0))
 
             if score < min_score:
@@ -254,7 +247,6 @@ class FAISSVectorStore(VectorStore):
         if self._index is not None:
             return self._index
 
-        # Try loading from disk
         if self._index_path.exists():
             try:
                 import pickle
@@ -265,7 +257,6 @@ class FAISSVectorStore(VectorStore):
                 chunks_path = self._index_path.with_suffix(".pkl")
                 if chunks_path.exists():
                     with open(chunks_path, "rb") as f:
-                        # trusted: loads the index cache this app wrote itself
                         self._chunks = pickle.load(f)  # noqa: S301
                 logger.info("Loaded FAISS index from disk")
                 return self._index
@@ -275,7 +266,6 @@ class FAISSVectorStore(VectorStore):
         try:
             import faiss
 
-            # Inner product index (use with normalised vectors for cosine similarity)
             self._index = faiss.IndexFlatIP(dim)
             logger.info("Created new FAISS index (dim={d})", d=dim)
             return self._index
@@ -289,7 +279,6 @@ class FAISSVectorStore(VectorStore):
         embeddings = await self._embedder.embed_chunks(chunks)
         vectors = np.array(embeddings, dtype=np.float32)
 
-        # Normalise for cosine similarity
         faiss.normalize_L2(vectors)
 
         dim = vectors.shape[1]
@@ -299,7 +288,6 @@ class FAISSVectorStore(VectorStore):
         await loop.run_in_executor(None, lambda: index.add(vectors))
         self._chunks.extend(chunks)
 
-        # Persist to disk
         self._index_path.parent.mkdir(parents=True, exist_ok=True)
         await loop.run_in_executor(None, lambda: faiss.write_index(index, str(self._index_path)))
         chunks_path = self._index_path.with_suffix(".pkl")

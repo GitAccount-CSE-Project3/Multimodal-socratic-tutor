@@ -20,7 +20,6 @@ class LLMFactory:
     Use get_llm() and get_vision_llm() — never instantiate directly.
     """
 
-    # ── OpenAI ────────────────────────────────────────────────────────────────
 
     @staticmethod
     def _build_openai(model_name: str, **kwargs: Any) -> BaseLLM:
@@ -45,7 +44,6 @@ class LLMFactory:
                 detail="Run: pip install langchain-openai",
             ) from e
 
-    # ── Public factory methods ────────────────────────────────────────────────
 
     @classmethod
     def get_llm(cls, **kwargs: Any) -> BaseLLM:

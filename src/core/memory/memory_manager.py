@@ -11,9 +11,9 @@ class SessionContext:
     """Memory context loaded at session start."""
 
     record: MemoryRecord
-    is_returning: bool  # True if student has prior sessions
-    personalised_opener: str  # opening message referencing past work
-    priority_topics: list[str]  # weak topics to revisit this session
+    is_returning: bool
+    personalised_opener: str
+    priority_topics: list[str]
 
 
 class MemoryManager:
@@ -42,7 +42,6 @@ class MemoryManager:
 
         opener = self._build_opener(record, student_name, is_returning)
 
-        # Priority = weak topics ordered by score (lowest first)
         priority = sorted(
             record.weak_topics,
             key=lambda t: record.mastery_scores.get(t, 0.0),

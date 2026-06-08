@@ -31,7 +31,7 @@ class Chunker:
             from langchain_text_splitters import RecursiveCharacterTextSplitter
 
             return RecursiveCharacterTextSplitter(
-                chunk_size=self._chunk_size * 4,  # approx chars per token
+                chunk_size=self._chunk_size * 4,
                 chunk_overlap=self._chunk_overlap * 4,
                 separators=["\n\n", "\n", ". ", " ", ""],
                 length_function=len,
@@ -76,17 +76,15 @@ class Chunker:
             logger.warning("Empty text after cleaning for source: {s}", s=source)
             return []
 
-        # Split text
         if self._splitter is not None:
             raw_chunks = self._splitter.split_text(cleaned)
         else:
             raw_chunks = self._simple_split(cleaned)
 
-        # Build DocumentChunk objects
         chunks: list[DocumentChunk] = []
         for i, chunk_text in enumerate(raw_chunks):
             chunk_text = chunk_text.strip()
-            if len(chunk_text) < 50:  # skip tiny fragments
+            if len(chunk_text) < 50:
                 continue
 
             chunk = DocumentChunk(
@@ -95,7 +93,7 @@ class Chunker:
                 source=source,
                 chapter=chapter,
                 topic_tags=topic_tags or [],
-                token_count=len(chunk_text) // 4,  # rough estimate
+                token_count=len(chunk_text) // 4,
                 metadata={
                     "chunk_index": i,
                     "total_chunks": len(raw_chunks),

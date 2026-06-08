@@ -150,7 +150,6 @@ class StudentMemory:
         record = await self.load(student_id)
         record.mastery_scores[topic] = round(score, 1)
 
-        # Rebuild weak/strong lists
         record.weak_topics = [t for t, s in record.mastery_scores.items() if s < 60]
         record.strong_topics = [t for t, s in record.mastery_scores.items() if s >= 80]
 

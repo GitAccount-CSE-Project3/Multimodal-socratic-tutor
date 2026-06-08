@@ -12,12 +12,10 @@ def _setup_logger() -> None:
     """Configure loguru with file + stderr handlers."""
     settings = get_settings()
 
-    # Remove default handler
     _logger.remove()
 
     log_level = settings.app_log_level.value
 
-    # ── stderr handler (coloured in dev, plain in prod) ───────────
     fmt_dev = (
         "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
         "<level>{level: <8}</level> | "
@@ -35,7 +33,6 @@ def _setup_logger() -> None:
         diagnose=settings.app_debug,
     )
 
-    # ── file handler (always plain JSON-like) ─────────────────────
     log_dir = Path(settings.log_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
 
@@ -47,11 +44,10 @@ def _setup_logger() -> None:
         compression="zip",
         retention="14 days",
         backtrace=True,
-        diagnose=False,  # no sensitive data in file logs
+        diagnose=False,
     )
 
 
 _setup_logger()
 
-# Public export — import this everywhere
 logger = _logger

@@ -13,9 +13,9 @@ class ImageQuestion:
     """One Socratic question generated from an anatomy image."""
 
     question: str
-    structure: str  # which structure this targets
-    difficulty: str  # beginner | intermediate | advanced
-    hint: str  # hint to give if student struggles
+    structure: str
+    difficulty: str
+    hint: str
 
 
 class ImageQuestionGenerator:

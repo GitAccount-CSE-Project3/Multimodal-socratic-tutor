@@ -35,7 +35,6 @@ class ConversationManager:
             self._memory = MemoryManager()
         return self._memory
 
-    # ── Session lifecycle ──────────────────────────────────────────────────────
 
     async def start_session(
         self,
@@ -49,7 +48,6 @@ class ConversationManager:
         safe_id = sanitize_student_id(student_id)
         session_id = await self._store.create_session(safe_id)
 
-        # Load memory for personalised opener
         try:
             ctx = await self._get_memory().load_session_context(safe_id, student_name)
             opener = ctx.personalised_opener
@@ -78,7 +76,6 @@ class ConversationManager:
             is_active=False,
         )
 
-        # Save to long-term memory
         try:
             await self._get_memory().save_session_end(s_id, turns)
         except Exception as e:
@@ -86,7 +83,6 @@ class ConversationManager:
 
         logger.info("Session ended: {sid}", sid=session_id[:8])
 
-    # ── Turn management ────────────────────────────────────────────────────────
 
     async def advance_turn(
         self,
@@ -110,7 +106,6 @@ class ConversationManager:
                 "Bypass attempt: session={sid} turn={t}", sid=session_id[:8], t=current_turn
             )
 
-        # Advance hint level
         new_hint = current_hint
         if current_phase == ConversationPhase.TUTORING:
             if current_hint == HintLevel.NONE:
@@ -151,7 +146,6 @@ class ConversationManager:
             history=history,
         )
 
-        # Update memory if score provided
         if mastery_score is not None and topic:
             student_id = state.get("student_id", "")
             try:
@@ -161,7 +155,6 @@ class ConversationManager:
 
         return await self._store.get_session(session_id)
 
-    # ── Phase transitions ──────────────────────────────────────────────────────
 
     async def transition_phase(self, session_id: str, target: ConversationPhase) -> None:
         state = await self._store.get_session(session_id)
@@ -189,7 +182,6 @@ class ConversationManager:
     async def transition_to_mastery(self, session_id: str) -> None:
         await self.transition_phase(session_id, ConversationPhase.MASTERY)
 
-    # ── Eligibility ───────────────────────────────────────────────────────────
 
     async def answer_reveal_eligible(self, session_id: str) -> bool:
         state = await self._store.get_session(session_id)

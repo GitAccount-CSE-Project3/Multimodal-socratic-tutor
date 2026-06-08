@@ -1,4 +1,3 @@
-# settings_page.py - student profile and preferences
 
 from __future__ import annotations
 
@@ -56,7 +55,6 @@ def render() -> None:
             if st.button("Save profile", type="primary"):
                 st.session_state.student_name = name.strip()
                 st.session_state.student_level = "" if level == OT_LEVELS[0] else level
-                # A named student gets a stable ID → cross-session memory (req 6).
                 if name.strip():
                     slug = re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
                     st.session_state.student_id = f"student_{slug}" or st.session_state.student_id

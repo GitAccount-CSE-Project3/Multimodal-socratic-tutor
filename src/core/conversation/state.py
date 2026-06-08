@@ -3,8 +3,6 @@ from __future__ import annotations
 from enum import Enum
 from typing import NamedTuple
 
-# Single source of truth for phase display used in both sidebar and chat topbar.
-# Format: phase_value → (label, badge_bg, badge_fg)
 PHASE_CONFIG: dict[str, tuple[str, str, str]] = {
     "rapport":    ("Building rapport",     "rgba(56,135,230,.16)",  "#7DB4F5"),
     "tutoring":   ("Socratic tutoring",    "rgba(99,102,241,.18)",  "#A5B4FC"),
@@ -62,10 +60,10 @@ _PHASE_ORDER: tuple[ConversationPhase, ...] = (
 class HintLevel(int, Enum):
     """Progressive hint levels within the TUTORING phase."""
 
-    NONE = 0  # ask guiding question, no hint yet
-    LEVEL_1 = 1  # broad guiding question
-    LEVEL_2 = 2  # narrower clue
-    REVEALED = 3  # answer has been revealed
+    NONE = 0
+    LEVEL_1 = 1
+    LEVEL_2 = 2
+    REVEALED = 3
 
 
 class ResponseQuality(str, Enum):

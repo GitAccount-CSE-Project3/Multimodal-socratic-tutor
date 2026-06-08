@@ -12,7 +12,7 @@ class GuardResult:
     """Result from hallucination check."""
 
     is_grounded: bool
-    confidence: float  # 0.0 = definitely hallucinated, 1.0 = fully grounded
+    confidence: float
     flagged_phrases: list[str]
     reason: str
 
@@ -66,7 +66,6 @@ class HallucinationGuard:
                 reason="No context provided — cannot verify grounding",
             )
 
-        # Stage 1: Fast keyword overlap check
         overlap_score = self._keyword_overlap(answer, context)
         logger.debug("Hallucination guard overlap score: {s:.3f}", s=overlap_score)
 
@@ -78,11 +77,9 @@ class HallucinationGuard:
                 reason=f"Keyword overlap {overlap_score:.2f} above threshold",
             )
 
-        # Stage 2: LLM semantic verification (if enabled and LLM available)
         if self._use_llm and self._llm is not None:
             return await self._llm_verify(answer, context, query)
 
-        # Stage 2 fallback: flag as potentially hallucinated
         return GuardResult(
             is_grounded=overlap_score > 0.05,
             confidence=overlap_score,
@@ -180,7 +177,6 @@ class HallucinationGuard:
         flagged = []
 
         for sentence in sentences[:10]:
-            # Check if key nouns from sentence appear in context
             nouns = re.findall(r"\b[A-Z][a-z]{3,}\b", sentence)
             if nouns:
                 found = any(n.lower() in context_lower for n in nouns)

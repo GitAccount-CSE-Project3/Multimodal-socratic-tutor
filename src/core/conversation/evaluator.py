@@ -21,11 +21,11 @@ class EvaluationResult:
     """Result from evaluating one student response."""
 
     quality: ResponseQuality
-    score: float  # 0.0 – 1.0
-    feedback: str  # one sentence of constructive feedback
-    correct_parts: str  # what the student got right
-    missing_parts: str  # what was missing or wrong
-    encouragement: str  # affirmation or redirect message
+    score: float
+    feedback: str
+    correct_parts: str
+    missing_parts: str
+    encouragement: str
 
 
 class StudentResponseEvaluator:
@@ -79,10 +79,8 @@ class StudentResponseEvaluator:
                 encouragement="Take your time — what do you think?",
             )
 
-        # Stage 1: fast keyword check
         overlap = self.keyword_overlap(student_response, reference_answer)
 
-        # Stage 2: LLM semantic evaluation
         try:
             result = await self._llm_evaluate(
                 student_response=student_response,

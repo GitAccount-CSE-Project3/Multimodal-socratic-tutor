@@ -1,4 +1,3 @@
-# chat.py - main tutoring chat page
 
 from __future__ import annotations
 
@@ -48,8 +47,8 @@ def _clean_for_speech(text: str) -> str:
     """Strip the citation block and markdown symbols so TTS reads naturally."""
     import re
 
-    speech = re.split(r"\n\s*Sources?:", text)[0]  # drop trailing "Sources:" list
-    speech = re.sub(r"[*_#`>\[\]]", "", speech)  # drop markdown punctuation
+    speech = re.split(r"\n\s*Sources?:", text)[0]
+    speech = re.sub(r"[*_#`>\[\]]", "", speech)
     speech = re.sub(r"\s+", " ", speech).strip()
     return speech or text
 
@@ -89,12 +88,10 @@ def _render_message(msg: dict, idx: int = 0) -> None:
                             _clean_for_speech(content)
                         )
                     st.session_state["_tts_autoplay"] = audio_key
-                except Exception as e:  # surface ANY failure so it's never silent
+                except Exception as e:
                     st.session_state[audio_key] = None
                     st.error(f"Could not generate audio: {e}")
             if st.session_state.get(audio_key):
-                # Auto-play only on the click that just generated it (not on every
-                # later rerun), so old clips don't replay when the page refreshes.
                 autoplay = st.session_state.get("_tts_autoplay") == audio_key
                 if autoplay:
                     del st.session_state["_tts_autoplay"]
@@ -141,7 +138,6 @@ def _is_substantive(text: str, engine: object) -> bool:
     t = text.lower().strip()
     if engine.detect_topic(text):
         return True
-    # Avoid bare "name"/"list" (they false-trigger on "my name is …").
     triggers = (
         "quiz",
         "explain",
@@ -191,7 +187,6 @@ async def _get_tutor_response(user_input: str, uploaded_image: UploadedFile | No
                 media_type=media_type,
                 user_question=question,
             )
-            # Move into tutoring so follow-up text turns escalate hints normally.
             st.session_state.phase = "tutoring"
             if img_response.topic_detected:
                 st.session_state.current_topic = img_response.topic_detected
@@ -312,13 +307,11 @@ def _send(text: str) -> None:
 
 
 def _composer() -> None:
-    # clear text box after a send
     if st.session_state.pop("_clear_composer", False):
         st.session_state.composer_text = ""
         st.session_state.pop("_last_audio_hash", None)
 
     st.session_state.setdefault("composer_text", "")
-    # rotating key resets the file_uploader widget after an image is consumed
     st.session_state.setdefault("uploader_seq", 0)
 
     disabled = st.session_state.is_loading
@@ -339,7 +332,7 @@ def _composer() -> None:
                 st.image(uploaded, width=180, caption="Attached — add a question & send")
             if attached and st.button("Remove", key="composer_img_rm"):
                 st.session_state.uploaded_image = None
-                st.session_state.uploader_seq += 1  # reset the uploader widget
+                st.session_state.uploader_seq += 1
                 st.rerun()
 
         audio = None
@@ -354,7 +347,7 @@ def _composer() -> None:
         if audio is not None:
             try:
                 data = audio.getvalue()
-            except Exception:  # defensive: treat unreadable audio as none
+            except Exception:
                 data = b""
             if data and hash(data) != st.session_state.get("_last_audio_hash"):
                 st.session_state._last_audio_hash = hash(data)
@@ -390,7 +383,6 @@ def _composer() -> None:
         text = st.session_state.get("composer_text", "").strip()
         img = st.session_state.get("uploaded_image")
         if text or img is not None:
-            # Remember the typed text as the image question (image path reads this).
             st.session_state.image_question = text
             display = text if text else "📷 Image uploaded for analysis"
             st.session_state.messages.append({"role": "user", "content": display})

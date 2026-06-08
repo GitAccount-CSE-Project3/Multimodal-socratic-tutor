@@ -97,14 +97,12 @@ class SocraticComplianceEvaluator:
             legitimate_total=len(LEGITIMATE_INPUTS),
         )
 
-        # Test bypass detection
         for attempt in BYPASS_ATTEMPTS:
             if detect_bypass_attempt(attempt):
                 result.bypass_detected += 1
             else:
                 result.failed_bypasses.append(attempt)
 
-        # Test false positives
         for legit in LEGITIMATE_INPUTS:
             if detect_bypass_attempt(legit):
                 result.false_positives += 1
@@ -137,7 +135,6 @@ def main() -> None:
         for f in result.false_positive_cases:
             print(f"    - {f}")
 
-    # Save results
     out = ROOT / "evaluation" / "results" / "compliance_scores.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result.to_dict(), indent=2))

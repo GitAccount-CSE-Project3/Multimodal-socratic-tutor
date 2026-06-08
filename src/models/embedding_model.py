@@ -7,8 +7,8 @@ from src.config.settings import EmbeddingProvider, get_settings
 from src.utils.exceptions import EmbeddingError
 from src.utils.logger import logger
 
-_OPENAI_EMBEDDING_DIM: int = 1536   # text-embedding-3-small
-_ST_EMBEDDING_DIM: int = 384        # all-MiniLM-L6-v2
+_OPENAI_EMBEDDING_DIM: int = 1536
+_ST_EMBEDDING_DIM: int = 384
 
 
 class EmbeddingModel:

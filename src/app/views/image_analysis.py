@@ -1,4 +1,3 @@
-# image_analysis.py - upload anatomy images and get Socratic questions
 
 from __future__ import annotations
 
@@ -127,7 +126,6 @@ def render() -> None:
                         st.write(question_text)
                         st.write("")
 
-                    # Send to chat
                     if st.button("💬 Continue in tutor chat", width="stretch"):
                         first_q = getattr(questions[0], "question", "") if questions else ""
                         if first_q:
@@ -187,9 +185,8 @@ def render() -> None:
             c2.metric("Total size", f"{total_kb / 1024:.0f} MB")
             c3.metric("Source", "OpenStax A&P 2e")
 
-            # Show grid of image info
             with st.expander(f"View all {len(available)} images"):
-                for m in available[:200]:  # cap the list for performance
+                for m in available[:200]:
                     icon = "✅"
                     detail = (
                         m.get("region", "").replace("_", " ").title()

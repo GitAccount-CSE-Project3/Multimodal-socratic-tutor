@@ -31,9 +31,7 @@ def clean_text(text: str) -> str:
     Normalise whitespace and remove non-printable characters.
     Used during corpus ingestion.
     """
-    # Collapse multiple whitespace (including newlines) to single space
     text = re.sub(r"\s+", " ", text)
-    # Strip only C0/C1 control characters; keep non-ASCII (Greek letters, accented chars, etc.)
     text = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]", "", text)
     return text.strip()
 
@@ -44,12 +42,10 @@ def safe_parse_json(text: str) -> dict[str, Any] | None:
     Handles common LLM quirks: markdown fences, trailing commas.
     Returns None if parsing fails.
     """
-    # Strip markdown code fences
     text = re.sub(r"```(?:json)?\s*", "", text)
     text = re.sub(r"```\s*$", "", text)
     text = text.strip()
 
-    # Remove trailing commas before } or ]
     text = re.sub(r",\s*([}\]])", r"\1", text)
 
     try:
@@ -79,7 +75,7 @@ def format_citations(sources: list[str]) -> str:
     """Format a list of source strings into a readable citation block."""
     if not sources:
         return ""
-    unique = list(dict.fromkeys(sources))  # deduplicate, preserve order
+    unique = list(dict.fromkeys(sources))
     return "\n".join(f"[{i + 1}] {src}" for i, src in enumerate(unique))
 
 

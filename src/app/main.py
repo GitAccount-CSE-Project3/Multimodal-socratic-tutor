@@ -1,5 +1,3 @@
-# main.py - app entry point
-# run: streamlit run src/app/main.py
 
 from __future__ import annotations
 
@@ -11,13 +9,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
 
-# set_page_config MUST be the first Streamlit command — before importing
-# config.settings, which touches st.secrets at import time.
 st.set_page_config(
     page_title="socratOT — OT Anatomy Tutor",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="auto",  # respect the user's collapse choice; don't force-expand on every refresh
+    initial_sidebar_state="auto",
     menu_items={
         "Get Help": "https://github.com/bahodir4/multimodal-socratic-tutor",
         "About": "socratOT — Socratic AI Tutor for Occupational Therapy Education",
@@ -30,8 +26,6 @@ from src.utils.logger import logger  # noqa: E402
 
 settings = get_settings()
 
-
-# ── Global CSS ─────────────────────────────────────────────────────────────────
 
 st.markdown(
     """
@@ -84,8 +78,6 @@ header[data-testid="stHeader"] * { pointer-events: auto; }
 
 def _init_session() -> None:
     defaults: dict = {
-        # Unique per session, so a refresh starts with a clean dashboard.
-        # Saving a name in Settings switches to a stable, cross-session ID.
         "student_id": f"session_{uuid4().hex[:12]}",
         "student_name": "",
         "student_level": "",
@@ -112,7 +104,6 @@ def _init_session() -> None:
 
 def _render_sidebar() -> None:
     with st.sidebar:
-        # Logo
         st.markdown(
             """
         <div style="display:flex;align-items:center;gap:11px;

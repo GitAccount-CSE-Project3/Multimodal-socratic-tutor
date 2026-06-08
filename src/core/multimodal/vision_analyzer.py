@@ -14,12 +14,12 @@ from src.utils.logger import logger
 class VisionResult:
     """Result from one image analysis."""
 
-    structures: list[str]  # identified anatomical structures
-    region: str  # body region (brain, hand, etc.)
-    confidence: float  # 0.0 – 1.0
-    description: str  # free-text description
-    ot_relevance: str  # OT clinical relevance
-    raw_response: str  # full LLM response
+    structures: list[str]
+    region: str
+    confidence: float
+    description: str
+    ot_relevance: str
+    raw_response: str
     error: str | None = None
 
 
@@ -147,7 +147,6 @@ class VisionAnalyzer:
         parsed = safe_parse_json(raw)
 
         if not parsed:
-            # Graceful fallback — extract what we can from free text
             logger.warning("Vision LLM returned non-JSON — using fallback parser")
             return VisionResult(
                 structures=self._extract_structures_from_text(raw),

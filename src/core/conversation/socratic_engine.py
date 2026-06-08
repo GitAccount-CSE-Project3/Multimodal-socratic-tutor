@@ -49,7 +49,7 @@ class SocraticEngine:
         self._rag = rag_pipeline or RAGPipeline()
         self._llm = llm
         self._settings = get_settings()
-        self._multimodal = None  # lazy-loaded
+        self._multimodal = None
 
     def _get_llm(self) -> object:
         if self._llm is None:
@@ -66,7 +66,6 @@ class SocraticEngine:
             self._multimodal = MultimodalPipeline(rag_pipeline=self._rag)
         return self._multimodal
 
-    # ── Image input entry point ───────────────────────────────────────────────
 
     async def generate_from_image(
         self,
@@ -99,7 +98,6 @@ class SocraticEngine:
             identified_structures=mm_result.vision_result.structures,
         )
 
-    # ── Text input entry point ────────────────────────────────────────────────
 
     async def generate(
         self,
@@ -117,8 +115,6 @@ class SocraticEngine:
         if phase == ConversationPhase.MASTERY:
             return await self._handle_mastery(session_state)
 
-        # Tutoring phase — retrieve with a conversation-aware query so that
-        # elliptical follow-ups ("how about in the legs") still find the right chunks.
         retrieval_query = self._build_retrieval_query(
             student_input, session_state.get("history", [])
         )
@@ -157,9 +153,6 @@ class SocraticEngine:
             hint_level=current_hint,
             session_state=session_state,
         )
-        # Advance the hint level so the NEXT turn escalates (NONE → 1 → 2 → reveal).
-        # Capped at LEVEL_2 so the reveal happens on the following turn — preserving
-        # the "no direct answer in the first two turns" rule.
         next_hint = HintLevel(min(int(current_hint) + 1, int(HintLevel.LEVEL_2)))
         return SocraticResponse(
             content=content,
@@ -171,12 +164,8 @@ class SocraticEngine:
             topic_detected=topic,
         )
 
-    # ── Phase handlers ────────────────────────────────────────────────────────
 
     async def _handle_rapport(self, student_input: str, session_state: dict) -> SocraticResponse:
-        # The opening greeting is shown by the UI, so here we only warmly
-        # acknowledge the student's reply and pivot to a topic — no re-greeting,
-        # no looping on "which semester are you in".
         content = await self._llm_call(
             f"""You are socratOT, a warm Socratic anatomy & neuroscience tutor for OT students.
 The student just said: "{student_input}"
@@ -214,7 +203,6 @@ Ask at most ONE question. Do NOT lecture or give facts yet."""
             topic_detected=None,
         )
 
-    # ── Hint generation ───────────────────────────────────────────────────────
 
     async def _generate_hint(
         self,
@@ -275,7 +263,6 @@ Ask at most ONE question. Do NOT lecture or give facts yet."""
             f"Provide a clear complete answer now. Reference the source material."
         )
 
-    # ── Helpers ───────────────────────────────────────────────────────────────
 
     def _answer_reveal_eligible(self, hint_level: HintLevel) -> bool:
         return hint_level >= HintLevel.LEVEL_2

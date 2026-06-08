@@ -84,7 +84,6 @@ class RagasEvaluator:
             logger.info("Loaded {n} evaluation samples", n=len(all_samples))
             return all_samples
 
-        # Sample evenly across topics
         from collections import defaultdict
 
         by_topic: dict = defaultdict(list)
@@ -97,7 +96,6 @@ class RagasEvaluator:
         for topic in topics:
             sampled.extend(by_topic[topic][:per_topic])
 
-        # Top up if needed
         remaining = [s for s in all_samples if s not in sampled]
         sampled.extend(remaining[: self._n_samples - len(sampled)])
         sampled = sampled[: self._n_samples]
@@ -215,13 +213,10 @@ class RagasEvaluator:
                 ref_kw = keywords(s["reference_answer"])
                 q_kw = keywords(s["question"])
 
-                # Faithfulness: how much of the answer is in the context
                 faith = len(ans_kw & ctx_kw) / max(len(ans_kw), 1)
 
-                # Answer relevance: how much answer addresses the question
                 relevance = len(ans_kw & q_kw) / max(len(q_kw), 1)
 
-                # Context recall: how much of reference answer is in context
                 recall = len(ref_kw & ctx_kw) / max(len(ref_kw), 1)
 
                 faith_scores.append(faith)
@@ -270,7 +265,6 @@ async def main() -> None:
     print(f"  Samples:          {result.n_samples} ({result.failed_samples} failed)")
     print("=" * 60 + "\n")
 
-    # Save results
     out = ROOT / "evaluation" / "results" / "ragas_scores.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result.to_dict(), indent=2))

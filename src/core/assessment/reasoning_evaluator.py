@@ -96,7 +96,6 @@ Scoring guide:
         except Exception as e:
             logger.error("Reasoning evaluation failed: {e}", e=str(e))
 
-        # Fallback: keyword-based scoring
         return self._keyword_fallback(student_response, scenario)
 
     def _keyword_fallback(

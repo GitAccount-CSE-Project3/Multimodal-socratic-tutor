@@ -57,7 +57,6 @@ say so clearly. Do not introduce facts not present in the context."""
         self._retriever = retriever or Retriever()
         self._system_prompt = system_prompt or self.DEFAULT_SYSTEM_PROMPT
 
-        # Lazy-load LLM to avoid startup cost
         self._llm_instance = llm
         self._guard = guard
 
@@ -80,7 +79,6 @@ say so clearly. Do not introduce facts not present in the context."""
                 llm = self._get_llm()
                 self._guard = HallucinationGuard(llm=llm)
             except Exception:
-                # Guard without LLM verification — keyword-only mode
                 self._guard = HallucinationGuard(
                     llm=None,
                     use_llm_verification=False,
@@ -115,7 +113,6 @@ Answer:"""
         """
         logger.info("RAG pipeline query: {q!r}", q=user_query[:80])
 
-        # Step 1: Retrieve relevant chunks
         retrieval = await self._retriever.retrieve(user_query)
 
         if not retrieval.has_results:
@@ -137,13 +134,11 @@ Answer:"""
                 is_grounded=False,
             )
 
-        # Step 2: Build prompt with retrieved context
         prompt = self._build_prompt(
             query=user_query,
             context=retrieval.assembled_context,
         )
 
-        # Step 3: Generate answer with LLM
         try:
             import asyncio
 
@@ -158,7 +153,6 @@ Answer:"""
                 detail=str(e),
             ) from e
 
-        # Step 4: Hallucination check
         guard = self._get_guard()
         guard_result = await guard.check(
             answer=answer,

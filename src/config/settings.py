@@ -33,7 +33,6 @@ class VectorStoreType(str, Enum):
     CHROMA = "chroma"
     FAISS = "faiss"
 
-# (min, max) bounds used to clamp numeric settings instead of crashing on bad input
 _INT_BOUNDS = {
     "chunk_size": (128, 2048),
     "chunk_overlap": (0, 256),
@@ -63,7 +62,6 @@ class Settings(BaseSettings):
 
     openai_tts_model: str = Field(default="gpt-4o-mini-tts")
     openai_stt_model: str = Field(default="gpt-4o-mini-transcribe")
-    # Valid voices: alloy, echo, fable, onyx, nova, shimmer
     tts_voice: str = Field(default="alloy")
 
     embedding_provider: EmbeddingProvider = Field(default=EmbeddingProvider.OPENAI)
@@ -93,8 +91,6 @@ class Settings(BaseSettings):
 
     eval_dataset_path: str = Field(default="./evaluation/ground_truth.jsonl")
 
-    # Clamp bounded numeric settings into their valid range instead of crashing
-    # on a bad .env value (e.g. MAX_HINT_TURNS=0). Robustness for blind testing.
     @field_validator(
         "chunk_size",
         "chunk_overlap",
@@ -123,7 +119,6 @@ class Settings(BaseSettings):
     @field_validator("chunk_overlap")
     @classmethod
     def overlap_less_than_chunk(cls, v: int, info: object) -> int:
-        # Clamp (don't crash) if overlap >= chunk_size — robustness for bad config.
         data = getattr(info, "data", {})
         chunk_size = data.get("chunk_size", 512)
         if v >= chunk_size:
@@ -180,9 +175,8 @@ def _load_streamlit_secrets() -> None:
             if key.upper() not in os.environ:
                 os.environ[key.upper()] = str(val)
     except Exception:  # noqa: S110  # no st.secrets when not on Streamlit Cloud
-        pass  # not running on Streamlit Cloud
+        pass
 
-# Auto-load secrets when settings module is imported in a Streamlit app
 try:
     _load_streamlit_secrets()
     get_settings.cache_clear()

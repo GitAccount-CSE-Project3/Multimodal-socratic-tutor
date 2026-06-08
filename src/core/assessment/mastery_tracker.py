@@ -31,7 +31,6 @@ class MasteryTracker:
         self._memory = memory_manager or MemoryManager()
         self._evaluator = evaluator or ReasoningEvaluator()
         self._generator = generator or ClinicalScenarioGenerator()
-        # In-session topic mastery objects
         self._session_mastery: dict[str, TopicMastery] = {}
 
     async def run_assessment(
@@ -49,18 +48,14 @@ class MasteryTracker:
         Returns:
             (ReasoningScore, ClinicalScenario) tuple
         """
-        # Generate scenario
         scenario = await self._generator.generate(topic)
 
-        # Evaluate student response
         score = await self._evaluator.evaluate(student_response, scenario)
 
-        # Update in-session mastery
         if topic not in self._session_mastery:
             self._session_mastery[topic] = TopicMastery(topic=topic)
         self._session_mastery[topic].update(float(score.total))
 
-        # Persist to long-term memory
         await self._memory.update_after_turn(
             student_id=student_id,
             topic=topic,
@@ -94,7 +89,6 @@ class MasteryTracker:
         """
         scores = {t: m.score for t, m in self._session_mastery.items()}
 
-        # Also pull from long-term memory
         memory_scores = await self._memory.get_mastery_scores(student_id)
         scores.update(memory_scores)
 
@@ -104,7 +98,6 @@ class MasteryTracker:
         narrative = self._build_narrative(scores, weak_areas, strong_areas)
         next_steps = self._build_next_steps(weak_areas, strong_areas)
 
-        # Save session end
         await self._memory.save_session_end(student_id, total_turns)
 
         return PerformanceSummary(

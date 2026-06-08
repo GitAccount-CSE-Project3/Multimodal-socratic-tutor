@@ -40,7 +40,7 @@ class AudioService:
             resp = self._get_client().audio.speech.create(
                 model=self._settings.openai_tts_model,
                 voice=voice or self._settings.tts_voice,
-                input=text[:4000],  # TTS input cap — keep requests small/cheap
+                input=text[:4000],
             )
             data = resp.content
             logger.info("TTS synthesize OK: {n} bytes", n=len(data))
@@ -57,7 +57,7 @@ class AudioService:
             raise AudioError("No audio to transcribe.")
         try:
             buf = io.BytesIO(audio_bytes)
-            buf.name = filename  # OpenAI uses the extension to pick the decoder
+            buf.name = filename
             resp = self._get_client().audio.transcriptions.create(
                 model=self._settings.openai_stt_model,
                 file=buf,

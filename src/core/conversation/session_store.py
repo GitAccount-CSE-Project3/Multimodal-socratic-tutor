@@ -163,7 +163,6 @@ class SessionStore:
         values.append(datetime.now(tz=timezone.utc).isoformat())
         values.append(session_id)
 
-        # column names in `updates` are code-controlled; all values are parameterized
         sql = f"UPDATE sessions SET {', '.join(updates)} WHERE session_id = ?"  # noqa: S608
         async with await self._get_conn() as conn:
             await conn.execute(sql, values)
